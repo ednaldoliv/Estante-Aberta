@@ -220,6 +220,7 @@
   color: #e0e0e0;
   font-size: 14px;
   border-bottom: 1px solid rgba(100,108,255,0.05);
+  vertical-align: middle;
 }
 
 .table tbody tr {
@@ -275,16 +276,20 @@
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .btnEdit, .btnDelete, .btnSave, .btnCancel {
-  padding: 6px 12px;
+  padding: 8px 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  min-width: 84px;
 }
 
 .btnEdit {
@@ -294,7 +299,7 @@
 
 .btnEdit:hover {
   background: rgba(100,108,255,0.3);
-  transform: scale(1.1);
+  transform: scale(1.03);
 }
 
 .btnDelete {
@@ -304,7 +309,7 @@
 
 .btnDelete:hover {
   background: rgba(255,107,107,0.3);
-  transform: scale(1.1);
+  transform: scale(1.03);
 }
 
 .btnSave {
@@ -508,5 +513,28 @@
   
   .tableContainer {
     overflow-x: scroll;
+  }
+}
+
+/* Center specific columns: Ano, ISBN, Status, Ações */
+.table th:nth-child(4), .table td:nth-child(4),
+.table th:nth-child(6), .table td:nth-child(6),
+.table th:nth-child(8), .table td:nth-child(8),
+.table thead th:last-child, .table tbody td:last-child {
+  text-align: center;
+}
+
+/* Ensure actions header and cells are centered and buttons have enough hit area */
+.table thead th:last-child {
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btnEdit, .btnDelete {
+    min-width: 100%;
   }
 }

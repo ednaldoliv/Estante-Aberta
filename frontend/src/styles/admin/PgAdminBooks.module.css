@@ -70,6 +70,7 @@
 .table tbody td {
   padding: 1rem;
   color: rgba(255, 255, 255, 0.87);
+  vertical-align: middle;
 }
 
 .thumbnail {
@@ -85,6 +86,7 @@
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .ativo, .inativo {
@@ -121,15 +123,15 @@
   background: rgba(59, 130, 246, 0.1);
   color: #3b82f6;
   border: 1px solid rgba(59, 130, 246, 0.3);
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 6px;
-  min-width: 5.5rem;
+  min-width: 6.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
 }
 
 .editBtn:hover {
@@ -141,20 +143,20 @@
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 6px;
-  min-width: 5.5rem;
+  min-width: 6.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
 }
 
 .deleteBtn:hover {
   background: rgba(239, 68, 68, 0.2);
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1.02);
 }
 
 .modal {
@@ -331,5 +333,24 @@
   .table thead th,
   .table tbody td {
     padding: 0.75rem;
+  }
+}
+
+/* Center some numeric/status columns and action column */
+.table th:nth-child(4), .table td:nth-child(4),
+.table th:nth-child(6), .table td:nth-child(6),
+.table th:nth-child(8), .table td:nth-child(8),
+.table thead th:last-child, .table tbody td:last-child {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .actionGroup {
+    justify-content: center;
+    gap: 8px;
+    flex-direction: column;
+  }
+  .editBtn, .deleteBtn {
+    min-width: 100%;
   }
 }

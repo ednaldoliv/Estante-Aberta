@@ -20,6 +20,21 @@ async function getNextAvailableUserId() {
   return nextId;
 }
 
+async function getNextAvailableComentarioId() {
+  const comentarios = await prisma.comentario.findMany({
+    select: { id: true },
+    orderBy: { id: 'asc' }
+  });
+
+  let nextId = 1;
+  for (const comentario of comentarios) {
+    if (comentario.id !== nextId) break;
+    nextId += 1;
+  }
+
+  return nextId;
+}
+
 async function findUserByEmail(email) {
   return prisma.usuario.findUnique({ where: { email } });
 }
@@ -401,8 +416,11 @@ async function createComentario(usuarioId, resenhaId, texto, nota = null, parent
   }
   
   try {
+    const idDisponivel = await getNextAvailableComentarioId();
+
     const comentario = await prisma.comentario.create({
       data: {
+        id: idDisponivel,
         usuarioId: parseInt(usuarioId),
         resenhaId: parseInt(resenhaId),
         parentId: parentId !== null && parentId !== undefined ? parseInt(parentId) : null,
@@ -788,6 +806,7 @@ async function deleteDenunciaComentario(denunciaId) {
 module.exports = { 
   createUser, 
   getNextAvailableUserId,
+  getNextAvailableComentarioId,
   findUserByEmail, 
   getAllUsers, 
   getUserById, 

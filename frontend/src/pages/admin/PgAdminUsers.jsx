@@ -321,7 +321,7 @@ export function PgAdminUsers() {
                         />
                       ) : (
                         <span className={usuario.isAdmin ? styles.badgeAdmin : styles.badgeUser}>
-                          {usuario.isAdmin ? '✓ Admin' : 'Usuário'}
+                          {usuario.isAdmin ? 'Admin' : 'Usuário'}
                         </span>
                       )}
                     </td>

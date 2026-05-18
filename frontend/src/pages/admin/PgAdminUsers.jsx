@@ -251,7 +251,7 @@ export function PgAdminUsers() {
                   <th>Telefone</th>
                   <th>CPF</th>
                   <th>Admin</th>
-                  <th>Cadastrado em</th>
+                  <th>Data de Criação</th>
                   <th>Ações</th>
                 </tr>
               </thead>

@@ -92,4 +92,5 @@ Aplicacao disponivel em:
 - Uploads ficam em `backend/uploads`.
 - Para acesso administrativo, o usuario deve ter `isAdmin = true` e usar a chave definida em `ADMIN_ACCESS_KEY`.
 - Projeto academico de uso privado.
+- Equipe Ednaldo, Hugo, Lisa e Alonso
 

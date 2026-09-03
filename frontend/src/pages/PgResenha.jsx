@@ -411,8 +411,8 @@ export default function PgResenha() {
     : 'https://placehold.co/1600x480?text=Banner+do+Livro';
 
   // Avatar do autor da resenha
-  const avatarImage = resenha.usuario?.avatar 
-    ? `http://localhost:3001${resenha.usuario.avatar}`
+  const avatarImage = resenha.usuario?.fotoPerfil
+    ? `http://localhost:3001${resenha.usuario.fotoPerfil}`
     : 'https://placehold.co/128x128?text=' + (resenha.usuario?.nome?.[0] || 'U');
 
   // Galeria: usar todas as imagens da galeria do livro, ou a capa como fallback
@@ -461,6 +461,7 @@ export default function PgResenha() {
               <img src={avatarImage} alt="ícone do resenhista" className={styles.avatar} />
             </div>
             <div className={styles.titleBlock}>
+              <span className={styles.bookKicker}>Resenha de {livroCompleto?.titulo}</span>
               <h1 className={styles.title}>{resenha.titulo}</h1>
               <div className={styles.metaRow}>
                 <span className={styles.author}>Por {resenha.usuario?.nome || 'Anônimo'}</span>
@@ -525,10 +526,18 @@ export default function PgResenha() {
             </figure>
           )}
 
-          <p className={styles.amazonLink}>
-            Encontre o livro no site Amazon{" "}
-            <a href="#" className={styles.inlineLink} rel="noopener noreferrer"> (clique aqui) </a>
-          </p>
+          {Array.isArray(livroCompleto?.purchaseLinks) && livroCompleto.purchaseLinks.length > 0 ? (
+            <div className={styles.purchaseLinks}>
+              <span className={styles.amazonLink}>Encontre este livro:</span>
+              {livroCompleto.purchaseLinks.map((link, index) => (
+                <a key={`${link}-${index}`} href={link} className={styles.inlineLink} target="_blank" rel="noopener noreferrer">
+                  Ver opção de compra {index + 1}
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.amazonLink}>Links de compra ainda não cadastrados.</p>
+          )}
         </section>
 
         {/* Ficha Técnica (tabela) */}

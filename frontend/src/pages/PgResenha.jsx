@@ -9,16 +9,15 @@ import ReportComentarioModal from "../components/report/ReportComentarioModal";
  * Página de Resenha de Livro (Dark Mode) - sem Header/Footer
  */
 
-function StarRating({ value = 4.2 }) {
-  const full = Math.floor(value);
-  const half = value - full >= 0.5;
-  const empty = 5 - full - (half ? 1 : 0);
+function StarRating({ value = 0 }) {
+  const rating = Math.max(0, Math.min(5, Math.round(Number(value) || 0)));
+  const full = rating;
+  const empty = 5 - full;
   return (
-    <div className={styles.stars} aria-label={`Avaliação ${value} de 5`}>
+    <div className={styles.stars} aria-label={`Avaliação ${rating} de 5`}>
       {Array.from({ length: full }).map((_, i) => (
         <span key={`f${i}`}>★</span>
       ))}
-      {half && <span key="half">★</span>}
       {Array.from({ length: empty }).map((_, i) => (
         <span key={`e${i}`}>☆</span>
       ))}

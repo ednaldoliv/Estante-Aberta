@@ -98,7 +98,7 @@ export function PgAdminResenhas() {
       trechosMarcantes: trechosFiltrados,
       livroId: parseInt(formData.livroId),
       usuarioId: parseInt(formData.usuarioId),
-      avaliacao: parseFloat(formData.avaliacao)
+      avaliacao: parseInt(formData.avaliacao, 10)
     };
 
     try {
@@ -258,7 +258,7 @@ export function PgAdminResenhas() {
                       <td>{resenha.usuario?.nome || 'N/A'}</td>
                       <td>
                         <span className={styles.rating}>
-                          ⭐ {resenha.avaliacao.toFixed(1)}
+                          ⭐ {Math.round(resenha.avaliacao)}
                         </span>
                       </td>
                       <td>
@@ -327,9 +327,9 @@ export function PgAdminResenhas() {
                     <label>Avaliação *</label>
                     <input
                       type="number"
-                      min="0"
+                      step="1"
+                      min="1"
                       max="5"
-                      step="0.1"
                       value={formData.avaliacao}
                       onChange={(e) => setFormData({ ...formData, avaliacao: e.target.value })}
                       required

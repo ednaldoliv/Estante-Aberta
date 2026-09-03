@@ -479,9 +479,14 @@ async function deletarLivro(req, res) {
 async function criarResenha(req, res) {
   try {
     const { livroId, usuarioId, titulo, textoResumo, textoCompleto, avaliacao, trechosMarcantes } = req.body;
+    const avaliacaoInteira = Number(avaliacao);
     
     if (!livroId || !usuarioId || !titulo || !textoResumo || !textoCompleto || avaliacao === undefined) {
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+    }
+
+    if (!Number.isInteger(avaliacaoInteira) || avaliacaoInteira < 1 || avaliacaoInteira > 5) {
+      return res.status(400).json({ error: 'A avaliação deve ser um número inteiro entre 1 e 5' });
     }
 
     const resenha = await createResenha({
@@ -490,7 +495,7 @@ async function criarResenha(req, res) {
       titulo,
       textoResumo,
       textoCompleto,
-      avaliacao: parseFloat(avaliacao),
+      avaliacao: avaliacaoInteira,
       trechosMarcantes: trechosMarcantes || []
     });
 
@@ -540,12 +545,18 @@ async function atualizarResenha(req, res) {
   const { id } = req.params;
   try {
     const { titulo, textoResumo, textoCompleto, avaliacao, trechosMarcantes, ativo } = req.body;
+    const avaliacaoInteira = avaliacao !== undefined ? Number(avaliacao) : null;
     
     const dataToUpdate = {};
     if (titulo !== undefined) dataToUpdate.titulo = titulo;
     if (textoResumo !== undefined) dataToUpdate.textoResumo = textoResumo;
     if (textoCompleto !== undefined) dataToUpdate.textoCompleto = textoCompleto;
-    if (avaliacao !== undefined) dataToUpdate.avaliacao = parseFloat(avaliacao);
+    if (avaliacao !== undefined) {
+      if (!Number.isInteger(avaliacaoInteira) || avaliacaoInteira < 1 || avaliacaoInteira > 5) {
+        return res.status(400).json({ error: 'A avaliação deve ser um número inteiro entre 1 e 5' });
+      }
+      dataToUpdate.avaliacao = avaliacaoInteira;
+    }
     if (trechosMarcantes !== undefined) dataToUpdate.trechosMarcantes = trechosMarcantes;
     if (ativo !== undefined) dataToUpdate.ativo = ativo;
 

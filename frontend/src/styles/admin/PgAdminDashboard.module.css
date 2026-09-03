@@ -365,4 +365,10 @@
   .main { padding: 24px 16px; }
 }
 
-.main { overflow-y: visible; min-height: 0; }
+.main { overflow: visible; min-height: 0; height: auto; align-self: stretch; }
+
+@media (min-width: 769px) {
+  .container { height: 100vh; min-height: 0; overflow: hidden; }
+  .sidebar { min-height: 0; height: 100%; }
+  .main { min-height: 0; overflow: hidden; }
+}

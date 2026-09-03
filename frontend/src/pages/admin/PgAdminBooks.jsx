@@ -321,13 +321,13 @@ export default function PgAdminBooks() {
             </p>
           </div>
 
-          <button onClick={handleCreateBook} className={styles.createBtn}>
+          <button onClick={handleCreateBook} className={adminStyles.createButton}>
             + Criar Livro
           </button>
         </header>
 
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
+        <div className={adminStyles.tableContainer}>
+          <table className={adminStyles.table}>
             <thead>
               <tr>
                 <th>Capa</th>
@@ -392,7 +392,10 @@ export default function PgAdminBooks() {
         {showCreateModal && (
           <div className={styles.modal} onClick={() => setShowCreateModal(false)}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-              <h2>Criar Novo Livro</h2>
+              <div className={styles.modalHeader}>
+                <div><span className={styles.modalKicker}>Catálogo</span><h2>Criar Novo Livro</h2></div>
+                <button type="button" className={styles.closeButton} onClick={() => setShowCreateModal(false)}>✖</button>
+              </div>
               <form onSubmit={handleSubmitCreate}>
                 <div className={styles.formGrid}>
                   <div className={styles.formGroup}>
@@ -563,7 +566,10 @@ export default function PgAdminBooks() {
         {showEditModal && editingBook && (
           <div className={styles.modal} onClick={() => setShowEditModal(false)}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-              <h2>Editar Livro</h2>
+              <div className={styles.modalHeader}>
+                <div><span className={styles.modalKicker}>Catálogo</span><h2>Editar Livro</h2></div>
+                <button type="button" className={styles.closeButton} onClick={() => setShowEditModal(false)}>✖</button>
+              </div>
               <form onSubmit={handleSubmitEdit}>
                 <div className={styles.formGrid}>
                   <div className={styles.formGroup}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminUsers.module.css';
-import { API_ORIGIN } from '../../services/api';
+import api from '../../services/api';
 
 export function PgAdminUsers() {
   const navigate = useNavigate();
@@ -42,12 +42,10 @@ export function PgAdminUsers() {
   const carregarUsuarios = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios`);
-      if (!response.ok) throw new Error('Erro ao carregar usuários');
-      const data = await response.json();
-      setUsuarios(data);
+      const { data } = await api.get('/admin/usuarios');
+      setUsuarios(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Erro ao carregar usuários');
     } finally {
       setLoading(false);
     }

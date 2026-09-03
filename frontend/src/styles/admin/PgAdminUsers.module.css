@@ -569,3 +569,23 @@
   .main { padding: 24px 16px; }
   .header { flex-direction: column; align-items: stretch; gap: 16px; }
 }
+
+.modal { background: rgba(18, 52, 59, 0.52); backdrop-filter: blur(5px); }
+.modalContent { overflow: hidden; border: 1px solid #c2f3f8; background: #ffffff; box-shadow: 0 22px 54px rgba(18, 52, 59, 0.22); }
+.modalHeader { padding: 22px 24px; background: linear-gradient(135deg, #f6ffff, #dcf9fb); border-bottom-color: #c2f3f8; }
+.modalHeader h2 { margin: 4px 0 0; color: #12343b; font-size: 1.35rem; }
+.modalKicker { color: #16717e; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+.closeButton { color: #52757a; }
+.closeButton:hover { color: #12343b; background: #a7ecf4; }
+.modalForm { padding: 24px; gap: 16px; }
+.formGroup { gap: 6px; }
+.formGroup label { color: #37646b; font-size: 0.82rem; font-weight: 750; }
+.modalInput { min-height: 44px; background: #ffffff; border: 1px solid #a7ecf4; border-radius: 8px; color: #12343b; }
+.modalInput:focus { border-color: #16717e; box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.4); }
+.formGroupCheckbox { background: #f6ffff; border-color: #c2f3f8; }
+.formGroupCheckbox label { color: #37646b; }
+.modalActions { gap: 10px; padding-top: 12px; border-top: 1px solid #c2f3f8; }
+.btnCancelModal { background: #ffffff; border-color: #a7ecf4; color: #52757a; }
+.btnCancelModal:hover { background: #dcf9fb; border-color: #16717e; color: #12343b; }
+.btnSubmitModal { background: #16717e; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.2); }
+.btnSubmitModal:hover { background: #105d68; }

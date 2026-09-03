@@ -17,6 +17,25 @@
 .btnSubmit { background: #16717e; }
 .btnSubmit:hover { background: #105d68; }
 
+.modal { background: rgba(18, 52, 59, 0.52); backdrop-filter: blur(5px); }
+.modalContent { overflow: hidden; border: 1px solid #c2f3f8; background: #ffffff; box-shadow: 0 22px 54px rgba(18, 52, 59, 0.22); }
+.modalHeader { background: linear-gradient(135deg, #f6ffff, #dcf9fb); border-bottom-color: #c2f3f8; }
+.modalHeader h2 { color: #12343b; }
+.closeButton { color: #52757a; }
+.closeButton:hover { color: #12343b; background: #a7ecf4; }
+.modalForm { gap: 16px; }
+.formGroup { gap: 6px; }
+.formGroup label { color: #37646b; font-size: 0.82rem; font-weight: 750; }
+.input, .textarea, .select { min-height: 44px; background: #ffffff; border-color: #a7ecf4; color: #12343b; }
+.input:focus, .textarea:focus, .select:focus { border-color: #16717e; box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.4); }
+.formGroupCheckbox { background: #f6ffff; border-color: #c2f3f8; }
+.formGroupCheckbox label { color: #37646b; }
+.modalActions { border-top-color: #c2f3f8; padding-top: 12px; }
+.btnCancel { background: #ffffff; border: 1px solid #a7ecf4; color: #52757a; }
+.btnCancel:hover { background: #dcf9fb; color: #12343b; }
+.btnSubmit { background: #16717e; }
+.btnSubmit:hover { background: #105d68; }
+
 .createBtn {
   background: #16717e;
   color: white;
@@ -278,4 +297,27 @@
   .modalContent {
     max-height: 95vh;
   }
+}
+
+.modal { background: rgba(18, 52, 59, 0.52); backdrop-filter: blur(5px); }
+.modalContent { width: min(800px, 100%); max-height: 92vh; overflow-y: auto; overflow-x: hidden; background: #ffffff; border: 1px solid #c2f3f8; border-radius: 14px; box-shadow: 0 22px 54px rgba(18, 52, 59, 0.22); }
+.modalHeader { padding: 22px 24px; background: linear-gradient(135deg, #f6ffff, #dcf9fb); border-bottom: 1px solid #c2f3f8; }
+.modalHeader h2 { color: #12343b; }
+.closeButton { color: #52757a; background: transparent; }
+.closeButton:hover { color: #12343b; background: #a7ecf4; }
+.modalForm { padding: 24px; gap: 16px; }
+.formGroup { gap: 6px; }
+.formGroup label { color: #37646b; font-size: 0.82rem; font-weight: 750; }
+.input, .textarea, .select { min-height: 44px; background: #ffffff; border: 1px solid #a7ecf4; color: #12343b; }
+.input:focus, .textarea:focus, .select:focus { border-color: #16717e; box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.4); }
+.formGroupCheckbox { background: #f6ffff; border-color: #c2f3f8; }
+.formGroupCheckbox label { color: #37646b; }
+.modalActions { padding-top: 14px; border-top: 1px solid #c2f3f8; }
+.btnCancel { background: #ffffff; border: 1px solid #a7ecf4; color: #52757a; }
+.btnCancel:hover { background: #dcf9fb; color: #12343b; }
+.btnSubmit { background: #16717e; color: #ffffff; }
+.btnSubmit:hover { background: #105d68; }
+
+@media (max-width: 680px) {
+  .modalForm { padding: 18px; }
 }

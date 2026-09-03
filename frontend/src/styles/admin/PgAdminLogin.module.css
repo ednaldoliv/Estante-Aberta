@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a24 50%, #0d0d15 100%);
+  background: linear-gradient(135deg, #dcf9fb 0%, #f6ffff 50%, #a7ecf4 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -39,10 +39,10 @@
 }
 
 .card {
-  background: linear-gradient(135deg, rgba(26,27,33,0.95), rgba(20,20,24,0.9));
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 1px solid rgba(100,108,255,0.2);
+  border: 1px solid #c2f3f8;
   box-shadow: 
     0 20px 60px rgba(0,0,0,0.6),
     0 0 80px rgba(100,108,255,0.1),
@@ -63,7 +63,7 @@
   width: 80px;
   height: 80px;
   margin: 0 auto 24px;
-  background: linear-gradient(135deg, #646cff, #9334e6);
+  background: linear-gradient(135deg, #8de6f0, #16717e);
   border-radius: 20px;
   display: flex;
   align-items: center;

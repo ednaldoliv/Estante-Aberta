@@ -1,9 +1,9 @@
 .footer {
-  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-  color: #fff;
+  background: linear-gradient(180deg, #dcf9fb 0%, #a7ecf4 100%);
+  color: #12343b;
   padding: 3rem 0 0;
   margin-top: auto;
-  border-top: 1px solid rgba(100, 108, 255, 0.2);
+  border-top: 1px solid #8de6f0;
 }
 
 .container {
@@ -39,12 +39,12 @@
 .brandName {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #fff;
+  color: #12343b;
   margin: 0;
 }
 
 .description {
-  color: #b0b0b0;
+  color: #37646b;
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0;
@@ -71,8 +71,8 @@
 }
 
 .social a:hover {
-  background: #646cff;
-  border-color: #646cff;
+  background: #16717e;
+  border-color: #16717e;
   color: #fff;
   transform: translateY(-3px);
 }
@@ -81,10 +81,10 @@
 .sectionTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #fff;
+  color: #12343b;
   margin: 0 0 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #646cff;
+  border-bottom: 2px solid #16717e;
   display: inline-block;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .links a {
-  color: #b0b0b0;
+  color: #37646b;
   text-decoration: none;
   font-size: 0.95rem;
   transition: all 0.2s;
@@ -107,7 +107,7 @@
 }
 
 .links a:hover {
-  color: #646cff;
+  color: #16717e;
   padding-left: 0.5rem;
 }
 
@@ -141,13 +141,13 @@
 }
 
 .newsletterInput:focus {
-  border-color: #646cff;
+  border-color: #16717e;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .newsletterButton {
   padding: 0.875rem 1.5rem;
-  background: #646cff;
+  background: #16717e;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -158,9 +158,9 @@
 }
 
 .newsletterButton:hover {
-  background: #7c83ff;
+  background: #105d68;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(22, 113, 126, 0.25);
 }
 
 /* Copyright */

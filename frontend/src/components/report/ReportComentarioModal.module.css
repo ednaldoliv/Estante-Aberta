@@ -255,13 +255,13 @@
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, #646cff, #7c86ff);
+  background: linear-gradient(135deg, #8de6f0, #16717e);
   color: #fff;
 }
 
 .submitBtn:hover:not(:disabled) {
   filter: brightness(1.08);
-  box-shadow: 0 4px 12px rgba(100, 108, 255, 0.35);
+  box-shadow: 0 4px 12px rgba(22, 113, 126, 0.25);
 }
 
 .submitBtn:disabled {

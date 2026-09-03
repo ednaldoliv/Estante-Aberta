@@ -13,11 +13,11 @@
 
 .header h1 {
   font-size: 2rem;
-  color: #646cff;
+  color: #16717e;
 }
 
 .createBtn {
-  background: #646cff;
+  background: #16717e;
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -35,7 +35,7 @@
 }
 
 .tableWrapper {
-  background: #1a1a1a;
+  background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -47,7 +47,7 @@
 }
 
 .table thead {
-  background: linear-gradient(135deg, #646cff 0%, #535bf2 100%);
+  background: linear-gradient(135deg, #8de6f0 0%, #16717e 100%);
 }
 
 .table thead th {
@@ -64,7 +64,7 @@
 }
 
 .table tbody tr:hover {
-  background: #242424;
+  background: #dcf9fb;
 }
 
 .table tbody td {
@@ -175,7 +175,7 @@
 }
 
 .modalContent {
-  background: #1a1a1a;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 12px;
   max-width: 700px;
@@ -187,7 +187,7 @@
 
 .modalContent h2 {
   margin-bottom: 1.5rem;
-  color: #646cff;
+  color: #16717e;
   font-size: 1.5rem;
 }
 
@@ -224,7 +224,7 @@
 .formGroup input:focus,
 .formGroup textarea:focus {
   outline: none;
-  border-color: #646cff;
+  border-color: #16717e;
   box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
 }
 
@@ -267,8 +267,8 @@
 
 .btnAddLink {
   background: transparent;
-  border: 1px dashed #646cff;
-  color: #646cff;
+  border: 1px dashed #8de6f0;
+  color: #16717e;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -311,7 +311,7 @@
 }
 
 .saveBtn {
-  background: #646cff;
+  background: #16717e;
   color: white;
 }
 

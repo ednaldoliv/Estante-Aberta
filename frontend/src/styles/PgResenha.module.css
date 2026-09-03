@@ -1,19 +1,18 @@
 :root{
-  /* Dark Mode palette (provided) */
-  --accent: #646cff;
-  --accent-hover: #7c83ff;
-  --bg: #242424;            /* Background Principal */
-  --panel: #1a1b21;         /* Panel / cards */
-  --panel-alt: #2a2a2a;     /* secondary panels */
-  --text: #ffffff;          /* Texto principal */
-  --text-muted: #b0b0b0;    /* Texto secundário */
-  --borders: #2f2f3a;       /* Bordas */
+  --accent: #16717e;
+  --accent-hover: #105d68;
+  --bg: #f6ffff;
+  --panel: #ffffff;
+  --panel-alt: #dcf9fb;
+  --text: #12343b;
+  --text-muted: #52757a;
+  --borders: #c2f3f8;
   --radius: 12px;
-  --shadow: 0 10px 30px rgba(0,0,0,0.6);
+  --shadow: 0 10px 30px rgba(22, 113, 126, 0.12);
   --container-max: 1024px;
   --gap: 20px;
   --transition: 180ms ease;
-  --tag-bg: rgba(100,108,255,0.10);
+  --tag-bg: rgba(141, 230, 240, 0.35);
 }
 
 /* Page base */
@@ -493,7 +492,7 @@
 
 .ratingBarFill{
   height: 100%;
-  background: linear-gradient(90deg, #646cff, #7c83ff);
+  background: linear-gradient(90deg, #8de6f0, #16717e);
 }
 
 .ratingLinePercent{
@@ -717,7 +716,7 @@
 }
 
 .loginButton {
-  background: linear-gradient(135deg, var(--accent), #7c83ff);
+  background: linear-gradient(135deg, #16717e, #105d68);
   border: none;
   color: white;
   padding: 12px 32px;

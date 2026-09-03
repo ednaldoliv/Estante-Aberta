@@ -4,14 +4,14 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: radial-gradient(circle at top, #1e2144 0%, #111217 55%, #0d0e12 100%);
+  background: radial-gradient(circle at top, #dcf9fb 0%, #f6ffff 70%, #a7ecf4 100%);
 }
 
 .card {
   width: 100%;
   max-width: 460px;
-  background: rgba(20, 21, 27, 0.95);
-  border: 1px solid rgba(100, 108, 255, 0.35);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #c2f3f8;
   border-radius: 14px;
   padding: 28px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
@@ -19,7 +19,7 @@
 
 .title {
   margin: 0 0 18px;
-  color: #fff;
+  color: #12343b;
   font-size: 1.7rem;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .label {
-  color: #d2d5e9;
+  color: #37646b;
   font-size: 0.95rem;
 }
 
@@ -38,16 +38,16 @@
   min-height: 44px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #171924;
-  color: #fff;
+  background: #ffffff;
+  color: #12343b;
   padding: 0 12px;
   font-size: 0.98rem;
 }
 
 .input:focus {
   outline: none;
-  border-color: #646cff;
-  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.2);
+  border-color: #16717e;
+  box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.35);
 }
 
 .primaryButton {
@@ -55,14 +55,14 @@
   min-height: 44px;
   border: none;
   border-radius: 10px;
-  background: #646cff;
+  background: #16717e;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
 }
 
 .primaryButton:hover {
-  background: #7a81ff;
+  background: #105d68;
 }
 
 .primaryButton:disabled {
@@ -83,7 +83,7 @@
 .backLink {
   display: inline-block;
   margin-top: 14px;
-  color: #b8bcff;
+  color: #16717e;
   text-decoration: none;
 }
 

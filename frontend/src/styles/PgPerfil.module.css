@@ -1,9 +1,9 @@
 /* page wrapper */
 .page {
-  background: linear-gradient(180deg, #141418 0%, #0d0d0d 100%);
+  background: linear-gradient(180deg, #dcf9fb 0%, #f6ffff 70%, #a7ecf4 100%);
   min-height: calc(100vh - 120px);
   padding: 28px 20px;
-  color: #ececec;
+  color: #12343b;
 }
 
 /* centraliza e limita largura */
@@ -905,9 +905,9 @@
 }
 
 .selectPhotoButton {
-  background: rgba(100,108,255,0.1);
-  border: 1px solid #646cff;
-  color: #646cff;
+  background: rgba(141, 230, 240, 0.35);
+  border: 1px solid #16717e;
+  color: #16717e;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
@@ -917,10 +917,10 @@
 }
 
 .selectPhotoButton:hover {
-  background: #646cff;
+  background: #16717e;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(100,108,255,0.3);
+  box-shadow: 0 4px 12px rgba(22, 113, 126, 0.25);
 }
 
 /* responsividade */

@@ -1,18 +1,18 @@
 .footer {
   background: linear-gradient(180deg, #dcf9fb 0%, #a7ecf4 100%);
   color: #12343b;
-  padding: 3rem 0 0;
+  padding: 3.5rem 0 0;
   margin-top: auto;
   border-top: 1px solid #8de6f0;
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0 2rem 2rem;
+  padding: 0 2rem 3rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 3rem;
+  gap: 2.5rem;
 }
 
 /* Seção da marca */
@@ -41,6 +41,7 @@
   font-weight: bold;
   color: #12343b;
   margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .description {
@@ -63,8 +64,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(100, 108, 255, 0.2);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #8de6f0;
   border-radius: 8px;
   color: #b0b0b0;
   transition: all 0.3s;
@@ -127,10 +128,10 @@
 
 .newsletterInput {
   padding: 0.875rem 1rem;
-  border: 1px solid rgba(100, 108, 255, 0.3);
+  border: 1px solid #8de6f0;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background: #ffffff;
+  color: #12343b;
   font-size: 0.95rem;
   outline: none;
   transition: all 0.2s;
@@ -165,7 +166,7 @@
 
 /* Copyright */
 .copyright {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(246, 255, 255, 0.72);
   padding: 1.5rem 2rem;
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -173,7 +174,7 @@
 
 .copyright p {
   margin: 0.25rem 0;
-  color: #888;
+  color: #37646b;
   font-size: 0.9rem;
 }
 

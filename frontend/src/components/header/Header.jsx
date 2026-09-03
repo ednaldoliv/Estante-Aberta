@@ -10,6 +10,7 @@ export function Header() {
   const navigate = useNavigate()
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false)
   const suggestionsRef = useRef(null)
   const debounceTimerRef = useRef(null)
 
@@ -36,24 +37,30 @@ export function Header() {
   }, [])
 
   // Busca em tempo real com debounce
-  const fetchSuggestions = useCallback(async (searchQuery) => {
-    if (!searchQuery.trim()) {
-      setSuggestions([])
-      return
-    }
+  const fetchSuggestions = useCallback(async (searchQuery = '') => {
+    const normalizedQuery = searchQuery.trim()
+    setLoadingSuggestions(true)
     try {
-      const { data } = await (async () => {
-        const res = await fetch(`http://localhost:3001/api/search?q=${encodeURIComponent(searchQuery)}`)
-        const text = await res.text()
-        const parsed = text ? JSON.parse(text) : null
-        return { data: parsed?.results || [] }
-      })()
-      setSuggestions(Array.isArray(data) ? data.slice(0, 8) : [])
+      const endpoint = normalizedQuery
+        ? `/api/search?q=${encodeURIComponent(normalizedQuery)}`
+        : '/api/admin/livros'
+      const res = await fetch(`http://localhost:3001${endpoint}`)
+      const text = await res.text()
+      const parsed = text ? JSON.parse(text) : null
+      const data = normalizedQuery ? parsed?.results : parsed
+      setSuggestions(Array.isArray(data) ? data.filter((livro) => livro.ativo !== false).slice(0, 5) : [])
     } catch (e) {
       console.error('Erro ao buscar sugestões:', e)
       setSuggestions([])
+    } finally {
+      setLoadingSuggestions(false)
     }
   }, [])
+
+  function handleSearchFocus() {
+    setShowSuggestions(true)
+    if (suggestions.length === 0) fetchSuggestions(query)
+  }
 
   function handleInputChange(e) {
     const val = e.target.value
@@ -105,8 +112,14 @@ export function Header() {
       </Link>
 
       <div className={styles.searchContainer}>
-        <div className={styles.searchBar}>
+        <div className={styles.searchBar} role="search">
           <div className={styles.searchInputWrapper}>
+            <span className={styles.searchIcon} aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-4-4" />
+              </svg>
+            </span>
             <input
               type="text"
               placeholder="Busque por título, autor, editora, ISBN..."
@@ -114,13 +127,24 @@ export function Header() {
               aria-label="Buscar livros"
               value={query}
               onChange={handleInputChange}
-              onFocus={() => query.trim() && suggestions.length > 0 && setShowSuggestions(true)}
+              onFocus={handleSearchFocus}
               onKeyDown={(e) => { if (e.key === 'Enter') doSearch() }}
             />
+            {query && (
+              <button
+                type="button"
+                className={styles.clearSearch}
+                onClick={() => { setQuery(''); setSuggestions([]); setShowSuggestions(false) }}
+                aria-label="Limpar busca"
+              >
+                ×
+              </button>
+            )}
 
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && (loadingSuggestions || suggestions.length > 0) && (
               <div className={styles.suggestionsDropdown} ref={suggestionsRef} role="listbox">
-                {suggestions.map((livro) => (
+                {loadingSuggestions && <div className={styles.suggestionLoading}>Carregando livros...</div>}
+                {!loadingSuggestions && suggestions.map((livro) => (
                   <button
                     key={livro.id}
                     className={styles.suggestionItem}
@@ -143,8 +167,12 @@ export function Header() {
             )}
           </div>
 
-          <button className={styles.searchButton} aria-label="Pesquisar" onClick={doSearch}>
-            Pesquisar
+          <button className={styles.searchButton} aria-label="Pesquisar livros" onClick={doSearch}>
+            <span>Buscar</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
           </button>
 
         </div>

@@ -4,11 +4,12 @@
   width: 100%;
   max-width: 260px;
   height: 100%;
-  background: #1a1a1a;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #c2f3f8;
+  border-radius: 10px;
   padding: 0.875rem;
   gap: 0.75rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(22, 113, 126, 0.1);
   transition: transform 0.2s ease-in-out;
   margin: 0 auto;
 }
@@ -45,7 +46,7 @@
 }
 
 .title {
-  color: #fff;
+  color: #12343b;
   font-size: 1rem;
   font-weight: bold;
   margin: 0;
@@ -59,7 +60,7 @@
 }
 
 .author {
-  color: #888;
+  color: #5c7d82;
   font-size: 0.875rem;
   margin: 0;
 }
@@ -81,27 +82,27 @@
 }
 
 .reviewButton {
-  background-color: #646cff;
+  background-color: #16717e;
   color: white;
 }
 
 .reviewButton:hover {
-  background-color: #7c83ff;
+  background-color: #105d68;
 }
 
 .favoriteButton {
   background-color: transparent;
-  border: 1px solid #646cff;
-  color: #fff;
+  border: 1px solid #8de6f0;
+  color: #16717e;
 }
 
 .favoriteButton:hover {
-  background-color: #646cff;
+  background-color: #16717e;
 }
 
 .favoriteButton.favorited {
-  background-color: #646cff;
-  border-color: #646cff;
+  background-color: #16717e;
+  border-color: #16717e;
 }
 
 .favoriteButton:disabled {

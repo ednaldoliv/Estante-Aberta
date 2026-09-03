@@ -2,14 +2,15 @@
   position: relative;
   padding: 6px 2px;
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(26,26,26,0.98), rgba(26,26,26,0.92));
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid #c2f3f8;
+  box-shadow: 0 10px 30px rgba(22, 113, 126, 0.08);
 }
 
 /* Título do slider */
 .sliderTitle {
   font-size: 2.25rem;
-  color: #fff;
+  color: #12343b;
   text-align: center;
   margin: 0 0 1.5rem 0;
   padding: 0.5rem 0;
@@ -58,7 +59,7 @@
   height: 40px;
   border-radius: 999px;
   border: none;
-  background: #646cff; /* cor da marca */
+  background: #16717e;
   color: #fff;
   font-size: 20px;
   cursor: pointer;
@@ -72,7 +73,7 @@
 }
 .arrow:hover { 
   transform: translateY(-50%) scale(1.05);
-  background: #7c83ff;
+  background: #105d68;
 }
 .arrow:disabled { opacity: 0.45; cursor: default; transform: translateY(-50%); }
 
@@ -106,8 +107,8 @@
 }
 
 .activeDot {
-  background: #646cff;
-  box-shadow: 0 6px 10px rgba(100,108,255,0.24);
+  background: #16717e;
+  box-shadow: 0 6px 10px rgba(22, 113, 126, 0.24);
 }
 
 /* Ajustes responsivos para diferentes layouts */

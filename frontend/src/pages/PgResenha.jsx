@@ -430,29 +430,30 @@ export default function PgResenha() {
 
   return (
     <div className={styles.page}>
-      {/* Banner */}
-      <div
-        className={styles.banner}
-        role="img"
-        aria-label={`Banner: ${livroCompleto?.titulo}`}
-        style={{ backgroundImage: `url(${bannerImage})` }}
-      >
-        <div className={styles.bannerFade} />
-        <button 
-          className={`${styles.likeButton} ${curtiu ? styles.liked : ''}`}
-          onClick={handleCurtir}
-          aria-label={curtiu ? 'Remover curtida' : 'Curtir resenha'}
-        >
-          <span className={styles.likeIcon}>❤️</span>
-          <span className={styles.likeText}>
-            {curtiu ? 'Curtiu' : 'Curtir'}
-          </span>
-          <span className={styles.likeCount}>{curtidas}</span>
-        </button>
-      </div>
-
-      {/* Card container overlapping banner */}
       <main className={styles.container}>
+        <aside className={styles.bookRail}>
+          <div className={styles.coverFrame}>
+            <img src={bannerImage} alt={`Capa de ${livroCompleto?.titulo}`} className={styles.coverImage} />
+          </div>
+          <div className={styles.bookRailInfo}>
+            <span className={styles.railLabel}>Você está lendo</span>
+            <h2>{livroCompleto?.titulo}</h2>
+            <p>{livroCompleto?.autor}</p>
+            <div className={styles.railMeta}>
+              {livroCompleto?.ano && <span>{livroCompleto.ano}</span>}
+              {livroCompleto?.paginas && <span>{livroCompleto.paginas} páginas</span>}
+            </div>
+            <button
+              className={`${styles.likeButton} ${curtiu ? styles.liked : ''}`}
+              onClick={handleCurtir}
+              aria-label={curtiu ? 'Remover curtida' : 'Curtir resenha'}
+            >
+              <span className={styles.likeIcon}>♡</span>
+              <span className={styles.likeText}>{curtiu ? 'Você curtiu' : 'Curtir resenha'}</span>
+              <span className={styles.likeCount}>{curtidas}</span>
+            </button>
+          </div>
+        </aside>
 
         {/* Header */}
         <header className={styles.header}>

@@ -3,14 +3,14 @@
   --accent-hover: #105d68;
   --bg: #f6ffff;
   --panel: #ffffff;
-  --text: #ffffff;
-  --text-muted: #b0b0b0;
-  --borders: #2f2f3a;
+  --text: #12343b;
+  --text-muted: #52757a;
+  --borders: #c2f3f8;
   --radius: 12px;
 }
 
 .page {
-  background: var(--bg);
+  background: linear-gradient(135deg, #f6ffff 0%, #dcf9fb 100%);
   color: var(--text);
   min-height: 100vh;
   padding: 40px 20px 60px;
@@ -50,6 +50,11 @@
   padding: 25px;
   line-height: 1.8;
 }
+
+.section { box-shadow: 0 8px 22px rgba(22, 113, 126, 0.08); }
+.title { margin-bottom: 14px; }
+.section h3 { color: #12343b; }
+.section p, .section li { color: #244c54; }
 
 .section h2 {
   font-size: 1.4rem;

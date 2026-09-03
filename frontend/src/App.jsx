@@ -79,7 +79,6 @@ function Home() {
           <p className={homeStyles.heroText}>Explore o catálogo, descubra novas perspectivas e acompanhe a comunidade de leitores da Estante Aberta.</p>
           <div className={homeStyles.heroActions}>
             <a className={homeStyles.primaryAction} href="#catalogo">Explorar catálogo</a>
-            <a className={homeStyles.secondaryAction} href="#resenhas">Ler resenhas</a>
           </div>
         </div>
         <aside className={homeStyles.heroNote}>

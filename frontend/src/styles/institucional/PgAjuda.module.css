@@ -3,15 +3,15 @@
   --accent-hover: #105d68;
   --bg: #f6ffff;
   --panel: #ffffff;
-  --text: #ffffff;
-  --text-muted: #b0b0b0;
-  --borders: #2f2f3a;
+  --text: #12343b;
+  --text-muted: #52757a;
+  --borders: #c2f3f8;
   --success: #10b981;
   --radius: 12px;
 }
 
 .page {
-  background: var(--bg);
+  background: linear-gradient(135deg, #f6ffff 0%, #dcf9fb 100%);
   color: var(--text);
   min-height: 100vh;
   padding: 40px 20px 60px;
@@ -26,7 +26,7 @@
   text-align: center;
   margin-bottom: 50px;
   padding: 40px 20px;
-  background: linear-gradient(135deg, rgba(100, 108, 255, 0.1), rgba(200, 140, 255, 0.05));
+  background: linear-gradient(135deg, #8de6f0, #f6ffff);
   border-radius: var(--radius);
   border: 1px solid var(--borders);
 }
@@ -60,7 +60,7 @@
   border: 1px solid var(--borders);
   border-radius: 8px;
   background: var(--panel);
-  color: var(--text);
+  color: #12343b;
   font-size: 1rem;
   transition: all 200ms ease;
 }
@@ -137,6 +137,24 @@
   align-items: center;
   transition: all 180ms ease;
 }
+
+.hero { box-shadow: 0 16px 36px rgba(22, 113, 126, 0.12); }
+.hero .subtitle { color: #37646b; }
+.searchInput { border-color: #8de6f0; background: #ffffff; }
+.faqContent { gap: 18px; }
+.categoryBlock { padding: 24px; box-shadow: 0 8px 22px rgba(22, 113, 126, 0.08); }
+.categoryTitle { color: #16717e; border-bottom-color: #c2f3f8; }
+.faqItem { background: #ffffff; border-color: #c2f3f8; }
+.faqQuestion { color: #12343b; font-weight: 700; }
+.faqQuestion span:last-child { background: #dcf9fb; color: #16717e; }
+.faqAnswer { color: #37646b; }
+.contactSection { background: #ffffff; border-color: #c2f3f8; box-shadow: 0 8px 22px rgba(22, 113, 126, 0.08); }
+.sectionTitle { color: #12343b; }
+.contactText { color: #52757a; }
+.faqItem:hover, .faqItem.expanded { background: #f6ffff; border-color: #8de6f0; }
+.faqAnswer p { color: #37646b; }
+.contactButton { color: #ffffff; background: #16717e; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.2); }
+.contactButton:hover { background: #105d68; box-shadow: 0 10px 24px rgba(22, 113, 126, 0.25); }
 
 .faqQuestion:hover {
   color: var(--accent);

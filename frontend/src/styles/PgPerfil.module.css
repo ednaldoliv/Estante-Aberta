@@ -993,3 +993,99 @@
   .catalogGrid { grid-template-columns: 1fr 1fr; }
   .catalogCover { height: 150px; }
 }
+
+.page {
+  min-height: calc(100vh - 120px);
+  padding: 34px clamp(16px, 4vw, 64px) 72px;
+  color: #12343b;
+  background: linear-gradient(135deg, #f6ffff 0%, #dcf9fb 52%, #f6ffff 100%);
+}
+
+.container { max-width: 1180px; }
+.tabs { gap: 8px; margin: 0 0 24px; padding: 0; border-bottom: 1px solid #a7ecf4; }
+.tab { padding: 12px 16px; color: #52757a; border-radius: 8px 8px 0 0; font-size: 0.95rem; }
+.tab:hover, .active { color: #16717e; background: #dcf9fb; }
+.tab:focus { outline-color: #16717e; }
+.active::after { bottom: -1px; width: 100%; height: 3px; background: #16717e; }
+
+.profileCard {
+  display: grid;
+  grid-template-columns: 144px minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  padding: 30px;
+  margin-bottom: 34px;
+  background: #ffffff;
+  border: 1px solid #c2f3f8;
+  border-radius: 16px;
+  box-shadow: 0 16px 36px rgba(22, 113, 126, 0.12);
+}
+
+.avatarWrap { flex: none; width: 144px; }
+.avatar { width: 132px; height: 132px; border: 5px solid #a7ecf4; background: linear-gradient(135deg, #8de6f0, #16717e); box-shadow: 0 12px 24px rgba(22, 113, 126, 0.2); }
+.name { color: #12343b; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+.stats { margin-top: 14px; color: #52757a; }
+.statNumber { color: #16717e; }
+.actionLinks { margin-top: 22px; }
+.btnPrimary, .btnOutline { border-color: #8de6f0; color: #16717e; background: #dcf9fb; }
+.btnPrimary { color: #ffffff; background: #16717e; border-color: #16717e; }
+.btnPrimary:hover, .btnOutline:hover { background: #a7ecf4; box-shadow: 0 8px 20px rgba(22, 113, 126, 0.14); }
+.btnPrimary:hover { background: #105d68; }
+.btnPrimary:focus, .btnOutline:focus { outline-color: #16717e; }
+.hr { background: #a7ecf4; margin: 34px 0; }
+.section { margin-bottom: 42px; }
+.libraryTitle { margin-bottom: 22px; color: #16717e; font-size: 1rem; letter-spacing: 0.14em; }
+.subsection { margin-bottom: 34px; }
+.subTitle { margin-bottom: 12px; color: #37646b; letter-spacing: 0.08em; }
+.sectionHint, .loadingText { color: #52757a; }
+
+.grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.bookCard, .colCard { height: 248px; align-items: stretch; background: #ffffff; border: 1px solid #c2f3f8; border-radius: 10px; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.08); }
+.bookCard:hover, .colCard:hover { border-color: #8de6f0; box-shadow: 0 14px 26px rgba(22, 113, 126, 0.15); }
+.bookImageWrapper, .bookCover { height: 190px; }
+.bookTitle { height: 58px; padding: 12px; color: #12343b; font-weight: 700; }
+.bookTitle:hover { color: #16717e; }
+.removeFavorite { background: rgba(18, 52, 59, 0.85); opacity: 1; }
+.addBookCard { height: 248px; color: #16717e; background: rgba(255, 255, 255, 0.55); border-color: #8de6f0; }
+.addBookCard:hover { border-color: #16717e; background: #dcf9fb; }
+.addBookLabel { color: #16717e; }
+.emptyState { padding: 36px 20px; color: #52757a; background: #ffffff; border: 1px dashed #8de6f0; border-radius: 12px; }
+.btnExplore { background: #16717e; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.2); }
+.btnExplore:hover { background: #105d68; }
+
+.sectionBody, .accountCard { background: #ffffff; border: 1px solid #c2f3f8; box-shadow: 0 8px 22px rgba(22, 113, 126, 0.08); }
+.sectionTitle, .accountTitle { color: #16717e; }
+.bioText { color: #244c54; }
+.emptyBio { color: #52757a; }
+.accountSection { max-width: none; }
+.accountCard { border-radius: 14px; }
+.label { color: #37646b; }
+.input, .modalInput, .modalTextarea { background: #ffffff; border-color: #a7ecf4; color: #12343b; }
+.input:focus, .modalInput:focus, .modalTextarea:focus { border-color: #16717e; box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.4); background: #f6ffff; }
+.saveButton, .btnSubmitModal { background: #16717e; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.2); }
+.saveButton:hover:not(:disabled), .btnSubmitModal:hover:not(:disabled) { background: #105d68; }
+.modal { background: rgba(18, 52, 59, 0.48); }
+.modalContent { background: #ffffff; border-color: #c2f3f8; box-shadow: 0 20px 50px rgba(18, 52, 59, 0.22); }
+.modalHeader { border-bottom-color: #c2f3f8; }
+.modalHeader h2 { color: #16717e; }
+.modalDescription { color: #52757a; }
+.catalogCard { background: #f6ffff; border-color: #c2f3f8; color: #12343b; }
+.catalogCard:hover { border-color: #16717e; box-shadow: 0 12px 24px rgba(22, 113, 126, 0.14); }
+.catalogButtonLabel { color: #16717e; }
+.btnCancelModal { border-color: #a7ecf4; color: #52757a; }
+.btnCancelModal:hover { background: #dcf9fb; border-color: #16717e; color: #12343b; }
+.photoPreviewWrapper { border-color: #8de6f0; box-shadow: 0 8px 22px rgba(22, 113, 126, 0.18); }
+.photoPlaceholder { background: #f6ffff; border-color: #8de6f0; }
+.photoPlaceholder p { color: #52757a; }
+
+@media (max-width: 720px) {
+  .page { padding: 24px 14px 52px; }
+  .profileCard { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 24px 18px; }
+  .profileMain { width: 100%; }
+  .actionLinks { flex-direction: column; width: 100%; }
+  .btnPrimary, .btnOutline { width: 100%; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .bookCard, .addBookCard { height: 220px; }
+  .bookImageWrapper, .bookCover { height: 164px; }
+  .bookTitle { height: 56px; padding: 10px; }
+}

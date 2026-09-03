@@ -59,7 +59,7 @@ export async function fetchUserByEmail(email) {
 const api = {
   get: async (endpoint) => {
     const res = await fetch(`${BASE_URL}${endpoint}`);
-    const data = await handleResponse(res);
+    const data = await handleResponse(res); 
     return { data };
   },
   post: async (endpoint, data, config = {}) => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminDashboard.module.css';
+import { API_ORIGIN } from '../../services/api';
 
 export function PgAdminDashboard() {
   const navigate = useNavigate();
@@ -34,16 +35,16 @@ export function PgAdminDashboard() {
   const carregarEstatisticas = async () => {
     try {
       // Carregar usuários
-      const usuariosResponse = await fetch('http://localhost:3001/api/admin/usuarios');
+      const usuariosResponse = await fetch(`${API_ORIGIN}/admin/usuarios`);
       if (usuariosResponse.ok) {
         const usuarios = await usuariosResponse.json();
         
         // Carregar livros
-        const livrosResponse = await fetch('http://localhost:3001/api/admin/livros');
+        const livrosResponse = await fetch(`${API_ORIGIN}/admin/livros`);
         const livros = livrosResponse.ok ? await livrosResponse.json() : [];
         
         // Carregar resenhas
-        const resenhasResponse = await fetch('http://localhost:3001/api/admin/resenhas');
+        const resenhasResponse = await fetch(`${API_ORIGIN}/admin/resenhas`);
         const resenhas = resenhasResponse.ok ? await resenhasResponse.json() : [];
         
         console.log('📊 Estatísticas carregadas:', {
@@ -121,10 +122,11 @@ export function PgAdminDashboard() {
       <main className={styles.main}>
         <header className={styles.header}>
           <div>
+            <p className={styles.eyebrow}>Visão geral</p>
             <h1 className={styles.pageTitle}>Dashboard</h1>
             <p className={styles.pageSubtitle}>Bem-vindo, {admin.nome}</p>
           </div>
-          <div className={styles.adminBadge}>
+          <div className={styles.adminBadge} title="Sessão administrativa ativa">
             <span className={styles.badgeIcon}>🛡️</span>
             Administrador
           </div>
@@ -132,7 +134,7 @@ export function PgAdminDashboard() {
 
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
-            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #646cff, #9334e6)' }}>
+            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #8de6f0, #16717e)' }}>
               👥
             </div>
             <div className={styles.statContent}>
@@ -162,7 +164,7 @@ export function PgAdminDashboard() {
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)' }}>
+            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #a7ecf4, #16717e)' }}>
               🟢
             </div>
             <div className={styles.statContent}>
@@ -174,14 +176,16 @@ export function PgAdminDashboard() {
 
         <div className={styles.contentGrid}>
           <div className={styles.panel}>
-            <h3 className={styles.panelTitle}>Atividades Recentes</h3>
+            <div className={styles.panelHeading}>
+              <div><p className={styles.panelKicker}>Acompanhe o movimento</p><h3 className={styles.panelTitle}>Atividades recentes</h3></div>
+            </div>
             <div className={styles.activityList}>
               <p className={styles.emptyState}>Nenhuma atividade recente</p>
             </div>
           </div>
 
           <div className={styles.panel}>
-            <h3 className={styles.panelTitle}>Ações Rápidas</h3>
+            <div><p className={styles.panelKicker}>Atalhos de gestão</p><h3 className={styles.panelTitle}>Ações rápidas</h3></div>
             <div className={styles.actionButtons}>
               <button className={styles.actionButton} onClick={() => navigate('/admin/livros')}>
                 <span>➕</span>
@@ -195,9 +199,9 @@ export function PgAdminDashboard() {
                 <span>📝</span>
                 Ver Resenhas
               </button>
-              <button className={styles.actionButton}>
+              <button className={styles.actionButton} onClick={() => navigate('/admin/comentarios')}>
                 <span>🔧</span>
-                Comentarios
+                Comentários
               </button>
             </div>
           </div>

@@ -3,6 +3,19 @@
   padding: 2rem;
   color: #888;
 }
+.loading { color: #52757a; }
+.createBtn { background: #16717e; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.18); }
+.createBtn:hover { background: #105d68; }
+.modal { background: rgba(18, 52, 59, 0.48); }
+.modalContent { border: 1px solid #c2f3f8; background: #ffffff; box-shadow: 0 20px 50px rgba(18, 52, 59, 0.22); }
+.modalHeader { border-bottom-color: #c2f3f8; }
+.modalHeader h2 { color: #12343b; }
+.formGroup label { color: #37646b; }
+.input, .textarea, .select { background: #ffffff; border-color: #a7ecf4; color: #12343b; }
+.input:focus, .textarea:focus, .select:focus { border-color: #16717e; box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.4); }
+.btnAddTrecho { color: #16717e; border-color: #8de6f0; }
+.btnSubmit { background: #16717e; }
+.btnSubmit:hover { background: #105d68; }
 
 .createBtn {
   background: #16717e;

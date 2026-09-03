@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminUsers.module.css';
+import { API_ORIGIN } from '../../services/api';
 
 export function PgAdminUsers() {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ export function PgAdminUsers() {
   const carregarUsuarios = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/admin/usuarios');
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios`);
       if (!response.ok) throw new Error('Erro ao carregar usuários');
       const data = await response.json();
       setUsuarios(data);
@@ -104,7 +105,7 @@ export function PgAdminUsers() {
         cpf: formData.cpf.replace(/\D/g, '')
       };
       
-      const response = await fetch(`http://localhost:3001/api/admin/usuarios/${id}`, {
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -125,7 +126,7 @@ export function PgAdminUsers() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/usuarios/${id}`, {
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${id}`, {
         method: 'DELETE'
       });
 
@@ -148,7 +149,7 @@ export function PgAdminUsers() {
         cpf: newUser.cpf.replace(/\D/g, '')
       };
       
-      const response = await fetch('http://localhost:3001/api/registro', {
+      const response = await fetch(`${API_ORIGIN}/registro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userToCreate)

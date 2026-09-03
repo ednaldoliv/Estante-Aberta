@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
 import { fetchUserByEmail } from '../../services/api';
+import { assetUrl } from '../../services/api';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -115,7 +116,7 @@ export function Profile() {
       >
         {user.fotoPerfil ? (
           <img 
-            src={`http://localhost:3001${user.fotoPerfil}`} 
+            src={assetUrl(user.fotoPerfil)} 
             alt="Foto de perfil" 
             className={styles.avatarImage}
           />
@@ -133,7 +134,7 @@ export function Profile() {
             >
               {user.fotoPerfil ? (
                 <img 
-                  src={`http://localhost:3001${user.fotoPerfil}`} 
+                  src={assetUrl(user.fotoPerfil)} 
                   alt="Foto de perfil" 
                   className={styles.dropdownAvatarImage}
                 />

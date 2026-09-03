@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import styles from './Header.module.css'
 import logo from '../../assets/Logo.png'
 import { Profile } from '../profile/Profile.user'
+import { API_ORIGIN, assetUrl } from '../../services/api'
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -44,7 +45,7 @@ export function Header() {
       const endpoint = normalizedQuery
         ? `/api/search?q=${encodeURIComponent(normalizedQuery)}`
         : '/api/admin/livros'
-      const res = await fetch(`http://localhost:3001${endpoint}`)
+      const res = await fetch(`${API_ORIGIN}${endpoint}`)
       const text = await res.text()
       const parsed = text ? JSON.parse(text) : null
       const data = normalizedQuery ? parsed?.results : parsed
@@ -153,7 +154,7 @@ export function Header() {
                     role="option"
                   >
                     <img 
-                      src={livro.fotoCapa ? `http://localhost:3001${livro.fotoCapa}` : '/placeholder.png'}
+                      src={livro.fotoCapa ? assetUrl(livro.fotoCapa) : '/placeholder.png'}
                       alt={livro.titulo}
                       className={styles.suggestionImage}
                     />

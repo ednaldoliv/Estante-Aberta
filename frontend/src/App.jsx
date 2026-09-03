@@ -21,7 +21,7 @@ import { PgAdminUsers } from './pages/admin/PgAdminUsers'
 import PgAdminBooks from './pages/admin/PgAdminBooks'
 import { PgAdminResenhas } from './pages/admin/PgAdminResenhas'
 import PgAdminComentarios from './pages/admin/PgAdminComentarios'
-import api from './services/api'
+import api, { assetUrl } from './services/api'
 import homeStyles from './styles/Home.module.css'
 
 function Home() {
@@ -100,14 +100,14 @@ function Home() {
             <div><h2>Livros em destaque</h2><p>Uma seleção para começar sua próxima leitura.</p></div>
             <a className={homeStyles.sectionLink} href="#catalogo">Ver catálogo</a>
           </div>
-          {livros.length > 0 ? <Slider items={livros} renderItem={(livro) => <CardBook key={livro.id} id={livro.id} image={livro.fotoCapa ? `http://localhost:3001${livro.fotoCapa}` : '/placeholder.png'} title={livro.titulo} author={livro.autor} />} slidesToShow={5} gap={20} autoplay autoplayInterval={5000} infinite maxItemWidth={280} /> : <div className={homeStyles.emptyState}>Nenhum livro disponível no momento.</div>}
+          {livros.length > 0 ? <Slider items={livros} renderItem={(livro) => <CardBook key={livro.id} id={livro.id} image={livro.fotoCapa ? assetUrl(livro.fotoCapa) : '/placeholder.png'} title={livro.titulo} author={livro.autor} />} slidesToShow={5} gap={20} autoplay autoplayInterval={5000} infinite maxItemWidth={280} /> : <div className={homeStyles.emptyState}>Nenhum livro disponível no momento.</div>}
         </section>
 
         <section className={homeStyles.section} id="resenhas">
           <div className={homeStyles.sectionHeader}>
             <div><h2>Resenhas recentes</h2><p>Descubra o que a comunidade está lendo.</p></div>
           </div>
-          {resenhas.length > 0 ? <div className={homeStyles.reviews}>{resenhas.map((resenha) => <Cardreview key={resenha.id} bookCover={resenha.livro?.fotoCapa ? `http://localhost:3001${resenha.livro.fotoCapa}` : '/placeholder.png'} userPhoto={resenha.usuario?.fotoPerfil ? `http://localhost:3001${resenha.usuario.fotoPerfil}` : null} userName={resenha.usuario?.nome || 'Usuário'} bookTitle={resenha.livro?.titulo || 'Livro'} reviewText={resenha.textoResumo || ''} reviewDate={new Date(resenha.createdAt).toLocaleDateString('pt-BR')} rating={resenha.avaliacao || 0} likes={resenha.curtidas || 0} onClick={() => navigate(`/resenha?livroId=${resenha.livroId}`)} />)}</div> : <div className={homeStyles.emptyState}>As primeiras resenhas da comunidade aparecerão aqui.</div>}
+          {resenhas.length > 0 ? <div className={homeStyles.reviews}>{resenhas.map((resenha) => <Cardreview key={resenha.id} bookCover={resenha.livro?.fotoCapa ? assetUrl(resenha.livro.fotoCapa) : '/placeholder.png'} userPhoto={resenha.usuario?.fotoPerfil ? assetUrl(resenha.usuario.fotoPerfil) : null} userName={resenha.usuario?.nome || 'Usuário'} bookTitle={resenha.livro?.titulo || 'Livro'} reviewText={resenha.textoResumo || ''} reviewDate={new Date(resenha.createdAt).toLocaleDateString('pt-BR')} rating={resenha.avaliacao || 0} likes={resenha.curtidas || 0} onClick={() => navigate(`/resenha?livroId=${resenha.livroId}`)} />)}</div> : <div className={homeStyles.emptyState}>As primeiras resenhas da comunidade aparecerão aqui.</div>}
         </section>
       </div>
     </main>

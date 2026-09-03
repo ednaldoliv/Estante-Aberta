@@ -1,3 +1,18 @@
+.container { padding: 0; max-width: none; }
+.header h1 { color: #12343b; }
+.tableWrapper { border: 1px solid #c2f3f8; box-shadow: 0 10px 26px rgba(22, 113, 126, 0.08); }
+.table thead { background: linear-gradient(135deg, #8de6f0, #16717e); }
+.table tbody tr { border-bottom-color: #dcf9fb; }
+.table tbody td { color: #244c54; }
+.createBtn { background: #16717e; box-shadow: 0 8px 18px rgba(22, 113, 126, 0.18); }
+.createBtn:hover { background: #105d68; }
+.modal { background: rgba(18, 52, 59, 0.48); }
+.modalContent { border-color: #c2f3f8; box-shadow: 0 20px 50px rgba(18, 52, 59, 0.22); }
+.formGroup label { color: #37646b; }
+.formGroup input, .formGroup textarea { background: #ffffff; border-color: #a7ecf4; color: #12343b; }
+.formGroup input:focus, .formGroup textarea:focus { border-color: #16717e; box-shadow: 0 0 0 3px rgba(141, 230, 240, 0.4); }
+.saveBtn { background: #16717e; }
+.saveBtn:hover { background: #105d68; }
 .container {
   padding: 2rem;
   max-width: 1400px;

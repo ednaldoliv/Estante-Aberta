@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import styles from '../../styles/admin/PgAdminBooks.module.css';
 import adminStyles from '../../styles/admin/PgAdminUsers.module.css';
+import { assetUrl } from '../../services/api';
 
 export default function PgAdminBooks() {
   const navigate = useNavigate();
@@ -346,7 +347,7 @@ export default function PgAdminBooks() {
                   <tr key={livro.id}>
                     <td>
                       <img
-                        src={livro.fotoCapa ? `http://localhost:3001${livro.fotoCapa}` : '/placeholder.png'}
+                        src={livro.fotoCapa ? assetUrl(livro.fotoCapa) : '/placeholder.png'}
                         alt={livro.titulo}
                         className={styles.thumbnail}
                       />

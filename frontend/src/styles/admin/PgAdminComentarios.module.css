@@ -4,6 +4,53 @@
   padding: 2rem;
   min-height: 100vh;
 }
+.container { max-width: none; min-height: auto; padding: 0; color: #12343b; }
+.tabs { border-bottom-color: #a7ecf4; }
+.tab { background: #ffffff; border-color: #c2f3f8; color: #52757a; }
+.tab:hover, .tab.active { background: #dcf9fb; border-color: #8de6f0; color: #16717e; }
+.filterBtn { background: #ffffff; border-color: #c2f3f8; color: #52757a; }
+.filterBtn:hover, .filterBtn.active { background: #dcf9fb; border-color: #16717e; color: #16717e; }
+.comentarioCard, .denunciaCard { border-color: #c2f3f8; box-shadow: 0 8px 22px rgba(22, 113, 126, 0.08); }
+.userInfo strong, .texto { color: #12343b; }
+.userInfo small, .data, .loading { color: #52757a; }
+.editTextarea { border-color: #a7ecf4; color: #12343b; }
+.editTextarea:focus { border-color: #16717e; box-shadow: 0 0 0 2px rgba(141, 230, 240, 0.4); }
+.modal { background: rgba(18, 52, 59, 0.48); }
+.modalContent { background: #ffffff; border-color: #c2f3f8; }
+.modalContent h2 { color: #12343b; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.actions button,
+.denunciaActions button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid #a7ecf4;
+  border-radius: 8px;
+  color: #16717e;
+  background: #f6ffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.actions button:hover,
+.denunciaActions button:hover { background: #dcf9fb; border-color: #16717e; transform: translateY(-1px); }
+.actions .btnEdit,
+.actions .buttonEdit { background: #dcf9fb; color: #16717e; }
+.actions .btnDelete,
+.actions .buttonDelete,
+.denunciaActions .buttonRemove { color: #a33d3d; border-color: #f1b4b4; background: #fff4f4; }
+.actions .btnSave,
+.denunciaActions .buttonApprove { color: #236b4b; border-color: #a9ddc1; background: #f0fff7; }
+.actions .btnCancel,
+.denunciaActions .buttonRevert { color: #52757a; background: #ffffff; }
+.denunciaActions .buttonReject { color: #a33d3d; border-color: #f1b4b4; background: #fff4f4; }
+.btnDetails { min-width: 38px; }
+
+@media (max-width: 640px) {
+  .actions button, .denunciaActions button { flex: 1 1 100%; }
+}
 
 .container h1 {
   text-align: center;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminLogin.module.css';
+import { API_ORIGIN } from '../../services/api';
 
 export function PgAdminLogin() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export function PgAdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/admin/login', {
+      const response = await fetch(`${API_ORIGIN}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha: password, accessKey })
@@ -41,6 +42,14 @@ export function PgAdminLogin() {
 
   return (
     <div className={styles.container}>
+      <aside className={styles.introPanel}>
+        <div className={styles.brandMark}>EA</div>
+        <p className={styles.eyebrow}>Estante Aberta</p>
+        <h1 className={styles.introTitle}>O centro de cuidado da sua comunidade de leitores.</h1>
+        <p className={styles.introText}>Gerencie livros, resenhas e conversas com clareza em um só lugar.</p>
+        <div className={styles.introLine} />
+        <span className={styles.introCaption}>PAINEL DE GESTÃO</span>
+      </aside>
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.iconContainer}>
@@ -49,8 +58,8 @@ export function PgAdminLogin() {
               <path d="M7 11V7a5 5 0 0 1 10 0v4" strokeWidth="2"/>
             </svg>
           </div>
-          <h1 className={styles.title}>Acesso Administrativo</h1>
-          <p className={styles.subtitle}>Área restrita - Apenas administradores</p>
+          <h2 className={styles.title}>Acesso administrativo</h2>
+          <p className={styles.subtitle}>Entre para cuidar da sua estante digital</p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>

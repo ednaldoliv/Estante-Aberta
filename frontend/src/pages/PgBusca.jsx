@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import api from '../services/api'
+import api, { assetUrl } from '../services/api'
 import { CardBook } from '../components/cardbook/CardBook'
 import styles from '../styles/PgBusca.module.css'
 
@@ -119,7 +119,7 @@ export default function PgBusca() {
               <CardBook
                 key={livro.id}
                 id={livro.id}
-                image={livro.fotoCapa ? `http://localhost:3001${livro.fotoCapa}` : '/placeholder.png'}
+                image={livro.fotoCapa ? assetUrl(livro.fotoCapa) : '/placeholder.png'}
                 title={livro.titulo}
                 author={livro.autor}
               />

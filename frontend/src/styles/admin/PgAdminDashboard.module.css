@@ -331,3 +331,38 @@
     gap: 16px;
   }
 }
+
+.container { background: #f6ffff; color: #12343b; }
+.sidebar { background: #ffffff; border-right-color: #c2f3f8; padding: 22px 18px; gap: 24px; box-shadow: 8px 0 24px rgba(22, 113, 126, 0.06); }
+.logo { padding-bottom: 20px; border-bottom-color: #c2f3f8; }
+.logoIcon { background: #16717e; border-radius: 12px; box-shadow: 0 8px 16px rgba(22, 113, 126, 0.2); }
+.logoText { color: #12343b; }
+.nav { gap: 4px; }
+.navItem { color: #52757a; border-radius: 8px; }
+.navItem:hover { background: #dcf9fb; color: #16717e; }
+.navItem.active { background: #dcf9fb; color: #16717e; box-shadow: inset 3px 0 #16717e; }
+.navDivider { background: #c2f3f8; }
+.backToSiteButton { background: #dcf9fb; border-color: #8de6f0; color: #16717e; }
+.backToSiteButton:hover { background: #a7ecf4; border-color: #16717e; }
+.main { padding: clamp(24px, 4vw, 48px); }
+.eyebrow { margin: 0 0 8px; color: #16717e; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.pageTitle { color: #12343b; font-size: clamp(2rem, 4vw, 3rem); }
+.pageSubtitle { color: #52757a; }
+.adminBadge { background: #dcf9fb; border-color: #8de6f0; color: #16717e; }
+.statsGrid { gap: 16px; }
+.statCard, .panel { background: #ffffff; border-color: #c2f3f8; border-radius: 12px; box-shadow: 0 8px 22px rgba(22, 113, 126, 0.08); }
+.statCard:hover { border-color: #8de6f0; box-shadow: 0 12px 26px rgba(22, 113, 126, 0.14); }
+.statValue { color: #12343b; }
+.statLabel, .pageSubtitle { color: #52757a; }
+.panelTitle { color: #12343b; margin-bottom: 8px; }
+.panelKicker { margin-bottom: 4px; }
+.emptyState { color: #52757a; }
+.actionButton { background: #f6ffff; border-color: #a7ecf4; color: #16717e; }
+.actionButton:hover { background: #dcf9fb; border-color: #16717e; }
+
+@media (max-width: 768px) {
+  .sidebar { box-shadow: 0 8px 20px rgba(22, 113, 126, 0.08); }
+  .main { padding: 24px 16px; }
+}
+
+.main { overflow-y: visible; min-height: 0; }

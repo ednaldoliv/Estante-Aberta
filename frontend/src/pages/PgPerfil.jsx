@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/PgPerfil.module.css';
+import { API_ORIGIN, assetUrl } from '../services/api';
 
 export default function PgPerfil() {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ export default function PgPerfil() {
 
   const loadUserData = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/usuarios/${userId}`);
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setAccountData({
@@ -75,7 +76,7 @@ export default function PgPerfil() {
   const loadFavoritos = async (userId) => {
     setLoadingFavoritos(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/favoritos/${userId}`);
+      const response = await fetch(`${API_ORIGIN}/favoritos/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setFavoritos(data);
@@ -90,7 +91,7 @@ export default function PgPerfil() {
   const loadLeituras = async (userId) => {
     setLoadingLeituras(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/leituras/${userId}`);
+      const response = await fetch(`${API_ORIGIN}/leituras/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setLeituras(data);
@@ -105,7 +106,7 @@ export default function PgPerfil() {
   const loadCatalogoLivros = async () => {
     setLoadingCatalogo(true);
     try {
-      const response = await fetch('http://localhost:3001/api/admin/livros');
+      const response = await fetch(`${API_ORIGIN}/admin/livros`);
       if (response.ok) {
         const data = await response.json();
         setCatalogoLivros((data || []).filter((livro) => livro.ativo !== false));
@@ -124,7 +125,7 @@ export default function PgPerfil() {
 
   const salvarLeitura = async (livroId) => {
     try {
-      const response = await fetch('http://localhost:3001/api/leituras', {
+      const response = await fetch(`${API_ORIGIN}/leituras`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -151,7 +152,7 @@ export default function PgPerfil() {
 
   const removerLeitura = async (livroId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/leituras/${user.id}/${livroId}`, {
+      const response = await fetch(`${API_ORIGIN}/leituras/${user.id}/${livroId}`, {
         method: 'DELETE'
       });
 
@@ -169,7 +170,7 @@ export default function PgPerfil() {
 
   const handleRemoveFavorito = async (livroId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/favoritos/${user.id}/${livroId}`, {
+      const response = await fetch(`${API_ORIGIN}/favoritos/${user.id}/${livroId}`, {
         method: 'DELETE'
       });
 
@@ -213,7 +214,7 @@ export default function PgPerfil() {
       formData.append('fotoPerfil', photoFile);
       formData.append('usuarioId', user.id);
 
-      const response = await fetch('http://localhost:3001/api/upload/foto-perfil', {
+      const response = await fetch(`${API_ORIGIN}/upload/foto-perfil`, {
         method: 'POST',
         body: formData
       });
@@ -264,7 +265,7 @@ export default function PgPerfil() {
         bio: accountData.bio
       };
 
-      const response = await fetch(`http://localhost:3001/api/admin/usuarios/${user.id}`, {
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -349,7 +350,7 @@ export default function PgPerfil() {
         cpf: accountData.cpf.replace(/\D/g, '')
       };
 
-      const response = await fetch(`http://localhost:3001/api/admin/usuarios/${user.id}`, {
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -397,7 +398,7 @@ export default function PgPerfil() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/usuarios/${user.id}`, {
+      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ senha: passwordData.novaSenha })
@@ -449,7 +450,7 @@ export default function PgPerfil() {
               <div className={styles.avatar} aria-hidden="true">
                 {user.fotoPerfil ? (
                   <img 
-                    src={`http://localhost:3001${user.fotoPerfil}`} 
+                    src={assetUrl(user.fotoPerfil)} 
                     alt="Foto de perfil" 
                     className={styles.avatarImage}
                   />
@@ -498,7 +499,7 @@ export default function PgPerfil() {
                       <figure key={leitura.id} className={styles.bookCard}>
                         <div className={styles.bookImageWrapper}>
                           <img
-                            src={`http://localhost:3001${leitura.livro.fotoCapa}`}
+                            src={assetUrl(leitura.livro.fotoCapa)}
                             alt={leitura.livro.titulo}
                             className={styles.bookCover}
                             onClick={() => navigate('/resenha', {
@@ -568,7 +569,7 @@ export default function PgPerfil() {
                       <figure key={leitura.id} className={styles.bookCard}>
                         <div className={styles.bookImageWrapper}>
                           <img
-                            src={`http://localhost:3001${leitura.livro.fotoCapa}`}
+                            src={assetUrl(leitura.livro.fotoCapa)}
                             alt={leitura.livro.titulo}
                             className={styles.bookCover}
                             onClick={() => navigate('/resenha', {
@@ -640,7 +641,7 @@ export default function PgPerfil() {
                     <figure key={favorito.id} className={styles.bookCard}>
                       <div className={styles.bookImageWrapper}>
                         <img 
-                          src={`http://localhost:3001${favorito.livro.fotoCapa}`} 
+                          src={assetUrl(favorito.livro.fotoCapa)} 
                           alt={favorito.livro.titulo} 
                           className={styles.bookCover}
                           onClick={() => navigate('/resenha', { 
@@ -718,7 +719,7 @@ export default function PgPerfil() {
                           onClick={() => salvarLeitura(livro.id)}
                         >
                           <img
-                            src={`http://localhost:3001${livro.fotoCapa}`}
+                            src={assetUrl(livro.fotoCapa)}
                             alt={livro.titulo}
                             className={styles.catalogCover}
                             onError={(e) => {

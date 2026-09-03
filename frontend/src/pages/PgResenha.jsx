@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../styles/PgResenha.module.css";
-import api from "../services/api";
+import api, { assetUrl } from "../services/api";
 import ReportComentarioModal from "../components/report/ReportComentarioModal";
 
 /**
@@ -293,7 +293,7 @@ export default function PgResenha() {
   function renderComment(c, isReply = false) {
     const nomeUsuario = c.usuario?.nome || 'Anônimo';
     const fotoUsuario = c.usuario?.fotoPerfil
-      ? `http://localhost:3001${c.usuario.fotoPerfil}`
+      ? assetUrl(c.usuario.fotoPerfil)
       : 'https://placehold.co/32x32?text=' + nomeUsuario[0];
     const dataComentario = new Date(c.createdAt).toLocaleString('pt-BR');
 
@@ -406,19 +406,19 @@ export default function PgResenha() {
 
   // Banner: usar a fotoCapa do livro como fundo principal
   const bannerImage = livroCompleto?.fotoCapa 
-    ? `http://localhost:3001${livroCompleto.fotoCapa}`
+    ? assetUrl(livroCompleto.fotoCapa)
     : 'https://placehold.co/1600x480?text=Banner+do+Livro';
 
   // Avatar do autor da resenha
   const avatarImage = resenha.usuario?.fotoPerfil
-    ? `http://localhost:3001${resenha.usuario.fotoPerfil}`
+    ? assetUrl(resenha.usuario.fotoPerfil)
     : 'https://placehold.co/128x128?text=' + (resenha.usuario?.nome?.[0] || 'U');
 
   // Galeria: usar todas as imagens da galeria do livro, ou a capa como fallback
   const galeriaImages = livroCompleto?.galeria && livroCompleto.galeria.length > 0
-    ? livroCompleto.galeria.map(img => `http://localhost:3001${img}`)
+    ? livroCompleto.galeria.map(img => assetUrl(img))
     : livroCompleto?.fotoCapa 
-      ? [`http://localhost:3001${livroCompleto.fotoCapa}`]
+      ? [assetUrl(livroCompleto.fotoCapa)]
       : ['https://placehold.co/1000x380?text=Galeria+do+Livro'];
 
   console.log('🎨 Imagens preparadas:', {

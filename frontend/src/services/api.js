@@ -1,4 +1,11 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+export const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, '');
+
+export function assetUrl(path) {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_ORIGIN}${String(path).startsWith('/') ? path : `/${path}`}`;
+}
 
 async function handleResponse(res) {
   let data = null;

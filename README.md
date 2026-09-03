@@ -11,7 +11,7 @@ Plataforma web para compartilhamento e descoberta de livros e resenhas.
 ## Requisitos
 
 - Node.js 18+
-- PostgreSQL 12+
+- PostgreSQL 12+ (Neon recomendado)
 - npm
 
 ## Instalacao
@@ -29,11 +29,13 @@ cd Projeto-Daniel
 npm install
 ```
 
-3. Configure o arquivo `.env` (na raiz) com os valores do seu ambiente:
+3. Configure o arquivo `.env` na raiz com os valores do seu ambiente. Para Neon, use a URL de conexão fornecida pelo painel do projeto:
 
 ```env
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/EstanteAberta"
+DATABASE_URL="postgresql://usuario:senha@ep-exemplo.sa-east-1.aws.neon.tech/neondb?sslmode=require"
 ADMIN_ACCESS_KEY="sua-chave-admin"
+PORT=3001
+VITE_API_URL="http://localhost:3001/api"
 ```
 
 4. Crie o banco e aplique schema/migracoes:
@@ -42,6 +44,8 @@ ADMIN_ACCESS_KEY="sua-chave-admin"
 npm run prisma:generate
 npm run prisma:push
 ```
+
+O comando `prisma:push` valida a conexão e sincroniza o schema diretamente com o banco Neon configurado em `DATABASE_URL`. Nunca versionar o arquivo `.env`.
 
 ## Executando o projeto
 

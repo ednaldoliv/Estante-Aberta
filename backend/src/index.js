@@ -4,6 +4,10 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const routes = require('./routes/routes');
 
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET deve ser configurado com pelo menos 32 caracteres antes de iniciar o backend');
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());

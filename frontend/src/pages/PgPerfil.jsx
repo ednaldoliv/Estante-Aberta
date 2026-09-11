@@ -57,7 +57,7 @@ export default function PgPerfil() {
 
   const loadUserData = async (userId) => {
     try {
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${userId}`);
+      const response = await fetch(`${API_ORIGIN}/me`);
       if (response.ok) {
         const data = await response.json();
         setAccountData({
@@ -106,7 +106,7 @@ export default function PgPerfil() {
   const loadCatalogoLivros = async () => {
     setLoadingCatalogo(true);
     try {
-      const response = await fetch(`${API_ORIGIN}/admin/livros`);
+      const response = await fetch(`${API_ORIGIN}/livros`);
       if (response.ok) {
         const data = await response.json();
         setCatalogoLivros((data || []).filter((livro) => livro.ativo !== false));
@@ -265,7 +265,7 @@ export default function PgPerfil() {
         bio: accountData.bio
       };
 
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${user.id}`, {
+      const response = await fetch(`${API_ORIGIN}/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -350,7 +350,7 @@ export default function PgPerfil() {
         cpf: accountData.cpf.replace(/\D/g, '')
       };
 
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${user.id}`, {
+      const response = await fetch(`${API_ORIGIN}/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -398,10 +398,10 @@ export default function PgPerfil() {
     }
 
     try {
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${user.id}`, {
+      const response = await fetch(`${API_ORIGIN}/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ senha: passwordData.novaSenha })
+        body: JSON.stringify({ senhaAtual: passwordData.senhaAtual, senha: passwordData.novaSenha })
       });
 
       if (!response.ok) {

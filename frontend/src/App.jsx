@@ -37,7 +37,7 @@ function Home() {
 
   async function carregarLivros() {
     try {
-      const response = await api.get('/admin/livros');
+      const response = await api.get('/livros');
       // Filtrar apenas livros ativos
       const livrosAtivos = (response.data || []).filter(livro => livro.ativo !== false);
       setLivros(livrosAtivos);

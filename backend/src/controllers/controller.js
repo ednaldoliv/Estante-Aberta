@@ -1,7 +1,9 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
-const { createUser, getNextAvailableUserId, findUserByEmail, getAllUsers, getUserById, updateUser, deleteUser, createBook, getAllBooks, getBookById, updateBook, deleteBook, createResenha, getAllResenhas, getResenhasByLivroId, getResenhaById, updateResenha, deleteResenha, addFavorito, addOrUpdateLeitura, removeLeitura, getLeiturasByUsuarioId, removeFavorito, getFavoritosByUsuarioId, checkFavorito, addCurtidaResenha, removeCurtidaResenha, checkCurtidaResenha, addOrUpdateAvaliacaoResenha, getAvaliacaoStatsByResenhaId, searchLivros, createComentario, getComentariosByResenhaId, deleteComentario, getComentarioById, getAllComentariosAdmin, updateComentarioAdmin, deleteComentarioAdmin, criarDenunciaComentario, getDenunciasComentarios, atualizarStatusDenuncia, deleteDenunciaComentario } = require('../services/service');
+const { createUser, findUserByEmail, getAllUsers, getUserById, updateUser, deleteUser, createBook, getAllBooks, getBookById, updateBook, deleteBook, createResenha, getAllResenhas, getResenhasByLivroId, getResenhaById, updateResenha, deleteResenha, addFavorito, addOrUpdateLeitura, removeLeitura, getLeiturasByUsuarioId, removeFavorito, getFavoritosByUsuarioId, checkFavorito, addCurtidaResenha, removeCurtidaResenha, checkCurtidaResenha, addOrUpdateAvaliacaoResenha, getAvaliacaoStatsByResenhaId, searchLivros, createComentario, getComentariosByResenhaId, deleteComentario, getComentarioById, getAllComentariosAdmin, updateComentarioAdmin, deleteComentarioAdmin, criarDenunciaComentario, getDenunciasComentarios, atualizarStatusDenuncia, deleteDenunciaComentario } = require('../services/service');
+const { signUserToken } = require('../middleware/auth');
 
 const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
 const passwordResetTokens = new Map();
@@ -15,23 +17,34 @@ function cleanupExpiredResetTokens() {
   }
 }
 
+function isOwnerOrAdmin(req, userId) {
+  return Boolean(req.auth?.isAdmin || req.auth?.userId === Number(userId));
+}
+
+function denyIfNotOwner(req, res, userId) {
+  if (!isOwnerOrAdmin(req, userId)) {
+    res.status(403).json({ error: 'Você não tem permissão para esta operação' });
+    return true;
+  }
+  return false;
+}
+
 async function registrarUsuario(req, res) {
-  // TODO: validação e hashing de senha
-  const { nome, email, telefone, cpf, senha, isAdmin } = req.body;
+  const { nome, email, telefone, cpf, senha } = req.body;
+  if (!nome || !email || !cpf || !senha || String(senha).length < 8) {
+    return res.status(400).json({ error: 'Nome, email, CPF e senha de ao menos 8 caracteres são obrigatórios' });
+  }
   try {
     const existente = await findUserByEmail(email);
     if (existente) {
       return res.status(409).json({ error: 'Email já cadastrado' });
     }
-    const idDisponivel = await getNextAvailableUserId();
     const novo = await createUser({
-      id: idDisponivel,
       nome,
-      email,
+      email: String(email).trim().toLowerCase(),
       telefone,
       cpf,
-      senha,
-      isAdmin: Boolean(isAdmin)
+      senha: await bcrypt.hash(String(senha), 12)
     });
     return res.status(201).json({ id: novo.id, nome: novo.nome, email: novo.email });
   } catch (e) {
@@ -45,21 +58,18 @@ async function registrarUsuario(req, res) {
 }
 
 async function logarUsuario(req, res) {
-  // TODO: validar senha (comparar hash)
   const { email, senha } = req.body;
-  console.log('Tentativa de login:', { email, senha });
   try {
-    const usuario = await findUserByEmail(email);
-    console.log('Usuário encontrado:', usuario ? { id: usuario.id, email: usuario.email, senha: usuario.senha } : 'não encontrado');
-    if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
-    // Comparar senha futuramente
-    console.log('Comparando senhas:', { recebida: senha, armazenada: usuario.senha, iguais: usuario.senha === senha });
-    if (usuario.senha !== senha) return res.status(401).json({ error: 'Credenciais inválidas' });
+    const usuario = await findUserByEmail(String(email || '').trim().toLowerCase());
+    if (!usuario || !senha) return res.status(401).json({ error: 'Credenciais inválidas' });
+    const senhaValida = await bcrypt.compare(String(senha), usuario.senha);
+    if (!senhaValida) return res.status(401).json({ error: 'Credenciais inválidas' });
     return res.json({ 
       id: usuario.id, 
       nome: usuario.nome, 
       email: usuario.email,
-      fotoPerfil: usuario.fotoPerfil 
+      fotoPerfil: usuario.fotoPerfil,
+      token: signUserToken(usuario)
     });
   } catch (e) {
     console.error(e);
@@ -68,20 +78,10 @@ async function logarUsuario(req, res) {
 }
 
 async function logarAdmin(req, res) {
-  const { email, senha, accessKey } = req.body;
-  
-  // Chave de acesso secreta (em produção, use variável de ambiente)
-  const ADMIN_ACCESS_KEY = process.env.ADMIN_ACCESS_KEY || 'projeto-daniel';
-  
-  console.log('Tentativa de login admin:', { email, accessKey });
+  const { email, senha } = req.body;
   
   try {
-    // Validar chave de acesso primeiro
-    if (accessKey !== ADMIN_ACCESS_KEY) {
-      return res.status(403).json({ error: 'Chave de acesso inválida' });
-    }
-
-    const usuario = await findUserByEmail(email);
+    const usuario = await findUserByEmail(String(email || '').trim().toLowerCase());
     
     if (!usuario) {
       return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -93,7 +93,7 @@ async function logarAdmin(req, res) {
     }
     
     // Validar senha
-    if (usuario.senha !== senha) {
+    if (!senha || !(await bcrypt.compare(String(senha), usuario.senha))) {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
     
@@ -101,7 +101,8 @@ async function logarAdmin(req, res) {
       id: usuario.id, 
       nome: usuario.nome, 
       email: usuario.email,
-      isAdmin: true
+      isAdmin: true,
+      token: signUserToken(usuario)
     });
   } catch (e) {
     console.error('Erro no login admin:', e);
@@ -189,7 +190,7 @@ async function redefinirSenha(req, res) {
       return res.status(400).json({ error: 'Token inválido ou expirado' });
     }
 
-    await updateUser(payload.userId, { senha: novaSenha });
+    await updateUser(payload.userId, { senha: await bcrypt.hash(String(novaSenha), 12) });
 
     // Invalida todos os tokens pendentes do usuário após redefinir senha.
     for (const [storedToken, storedPayload] of passwordResetTokens.entries()) {
@@ -257,18 +258,29 @@ async function buscarUsuarioPorId(req, res) {
 
 async function atualizarUsuario(req, res) {
   const { id } = req.params;
-  const { nome, email, telefone, cpf, isAdmin, senha, bio } = req.body;
+  const { nome, email, telefone, cpf, isAdmin, senha, senhaAtual, bio } = req.body;
   
   try {
+    if (denyIfNotOwner(req, res, id)) return;
     const dataToUpdate = {};
     if (nome !== undefined) dataToUpdate.nome = nome;
     if (email !== undefined) dataToUpdate.email = email;
     if (telefone !== undefined) dataToUpdate.telefone = telefone;
     if (cpf !== undefined) dataToUpdate.cpf = cpf;
-    if (isAdmin !== undefined) {
+    if (isAdmin !== undefined && req.auth?.isAdmin) {
       dataToUpdate.isAdmin = typeof isAdmin === 'string' ? isAdmin === 'true' : Boolean(isAdmin);
     }
-    if (senha !== undefined) dataToUpdate.senha = senha;
+    if (senha !== undefined) {
+      if (req.auth?.isAdmin && req.auth.userId !== Number(id)) {
+        return res.status(403).json({ error: 'Administradores não podem alterar a senha de outros usuários' });
+      }
+      const usuarioAtual = await getUserById(id);
+      if (!senhaAtual || !(await bcrypt.compare(String(senhaAtual), usuarioAtual.senha))) {
+        return res.status(400).json({ error: 'Senha atual inválida' });
+      }
+      if (String(senha).length < 8) return res.status(400).json({ error: 'A nova senha deve ter ao menos 8 caracteres' });
+      dataToUpdate.senha = await bcrypt.hash(String(senha), 12);
+    }
     if (bio !== undefined) dataToUpdate.bio = bio;
 
     const usuario = await updateUser(id, dataToUpdate);
@@ -286,6 +298,7 @@ async function atualizarUsuario(req, res) {
 async function deletarUsuario(req, res) {
   const { id } = req.params;
   try {
+    if (!req.auth?.isAdmin) return res.status(403).json({ error: 'Acesso administrativo obrigatório' });
     // Buscar usuário antes de deletar para remover arquivos
     const usuario = await getUserById(id);
     
@@ -367,7 +380,7 @@ async function criarLivro(req, res) {
 
 async function listarLivros(req, res) {
   try {
-    const livros = await getAllBooks();
+    const livros = await getAllBooks(Boolean(req.auth?.isAdmin));
     return res.json(livros);
   } catch (e) {
     console.error('Erro ao listar livros:', e);
@@ -378,7 +391,7 @@ async function listarLivros(req, res) {
 async function buscarLivroPorId(req, res) {
   const { id } = req.params;
   try {
-    const livro = await getBookById(id);
+    const livro = await getBookById(id, Boolean(req.auth?.isAdmin));
     if (!livro) {
       return res.status(404).json({ error: 'Livro não encontrado' });
     }
@@ -417,7 +430,7 @@ async function atualizarLivro(req, res) {
     if (req.files && req.files.galeria) {
       const novasImagens = req.files.galeria.map(file => `/uploads/books/${file.filename}`);
       // Mesclar com galeria existente ou substituir
-      const livroAtual = await getBookById(id);
+      const livroAtual = await getBookById(id, true);
       dataToUpdate.galeria = [...livroAtual.galeria, ...novasImagens];
     }
 
@@ -508,7 +521,7 @@ async function criarResenha(req, res) {
 
 async function listarResenhas(req, res) {
   try {
-    const resenhas = await getAllResenhas();
+    const resenhas = await getAllResenhas(Boolean(req.auth?.isAdmin));
     return res.json(resenhas);
   } catch (e) {
     console.error('Erro ao listar resenhas:', e);
@@ -530,7 +543,7 @@ async function listarResenhasPorLivro(req, res) {
 async function buscarResenhaPorId(req, res) {
   const { id } = req.params;
   try {
-    const resenha = await getResenhaById(id);
+    const resenha = await getResenhaById(id, Boolean(req.auth?.isAdmin));
     if (!resenha) {
       return res.status(404).json({ error: 'Resenha não encontrada' });
     }
@@ -544,6 +557,9 @@ async function buscarResenhaPorId(req, res) {
 async function atualizarResenha(req, res) {
   const { id } = req.params;
   try {
+    const existente = await getResenhaById(id, Boolean(req.auth?.isAdmin));
+    if (!existente) return res.status(404).json({ error: 'Resenha não encontrada' });
+    if (denyIfNotOwner(req, res, existente.usuarioId)) return;
     const { titulo, textoResumo, textoCompleto, avaliacao, trechosMarcantes, ativo } = req.body;
     const avaliacaoInteira = avaliacao !== undefined ? Number(avaliacao) : null;
     
@@ -571,6 +587,9 @@ async function atualizarResenha(req, res) {
 async function deletarResenha(req, res) {
   const { id } = req.params;
   try {
+    const existente = await getResenhaById(id, Boolean(req.auth?.isAdmin));
+    if (!existente) return res.status(404).json({ error: 'Resenha não encontrada' });
+    if (denyIfNotOwner(req, res, existente.usuarioId)) return;
     await deleteResenha(id);
     return res.json({ message: 'Resenha deletada com sucesso' });
   } catch (e) {
@@ -586,6 +605,7 @@ async function deletarResenha(req, res) {
 async function adicionarFavorito(req, res) {
   const { usuarioId, livroId } = req.body;
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     const favorito = await addFavorito(usuarioId, livroId);
     return res.status(201).json(favorito);
   } catch (e) {
@@ -600,6 +620,7 @@ async function adicionarFavorito(req, res) {
 async function removerFavorito(req, res) {
   const { usuarioId, livroId } = req.params;
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     await removeFavorito(usuarioId, livroId);
     return res.json({ message: 'Favorito removido com sucesso' });
   } catch (e) {
@@ -611,6 +632,7 @@ async function removerFavorito(req, res) {
 async function listarFavoritosUsuario(req, res) {
   const { usuarioId } = req.params;
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     const favoritos = await getFavoritosByUsuarioId(usuarioId);
     return res.json(favoritos);
   } catch (e) {
@@ -622,6 +644,7 @@ async function listarFavoritosUsuario(req, res) {
 async function verificarFavorito(req, res) {
   const { usuarioId, livroId } = req.params;
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     const isFavorito = await checkFavorito(usuarioId, livroId);
     return res.json({ isFavorito });
   } catch (e) {
@@ -636,6 +659,7 @@ async function salvarLeitura(req, res) {
   if (!usuarioId || !livroId) {
     return res.status(400).json({ error: 'Usuario e livro são obrigatórios' });
   }
+  if (denyIfNotOwner(req, res, usuarioId)) return;
 
   if (!['lendo', 'finalizada'].includes(status)) {
     return res.status(400).json({ error: 'Status inválido' });
@@ -654,6 +678,7 @@ async function listarLeiturasUsuario(req, res) {
   const { usuarioId } = req.params;
 
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     const leituras = await getLeiturasByUsuarioId(usuarioId);
     return res.json(leituras);
   } catch (e) {
@@ -666,6 +691,7 @@ async function removerLeituraUsuario(req, res) {
   const { usuarioId, livroId } = req.params;
 
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     await removeLeitura(usuarioId, livroId);
     return res.json({ message: 'Leitura removida com sucesso' });
   } catch (e) {
@@ -680,6 +706,7 @@ async function uploadFotoPerfil(req, res) {
   const userIdParsed = parseInt(usuarioId);
   
   try {
+    if (denyIfNotOwner(req, res, userIdParsed)) return;
     if (!usuarioId || Number.isNaN(userIdParsed)) {
       return res.status(400).json({ error: 'Usuário inválido' });
     }
@@ -720,6 +747,7 @@ async function curtirResenha(req, res) {
   const { usuarioId } = req.body;
   
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     if (!usuarioId) {
       return res.status(400).json({ error: 'usuarioId é obrigatório' });
     }
@@ -746,6 +774,7 @@ async function descurtirResenha(req, res) {
   const { usuarioId } = req.body;
   
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     if (!usuarioId) {
       return res.status(400).json({ error: 'usuarioId é obrigatório' });
     }
@@ -765,6 +794,7 @@ async function verificarCurtidaResenha(req, res) {
   const { resenhaId, usuarioId } = req.params;
   
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     const curtiu = await checkCurtidaResenha(usuarioId, resenhaId);
     return res.json({ curtiu });
   } catch (e) {
@@ -778,6 +808,7 @@ async function avaliarResenha(req, res) {
   const { usuarioId, nota } = req.body;
 
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     if (!usuarioId || nota === undefined) {
       return res.status(400).json({ error: 'usuarioId e nota são obrigatórios' });
     }
@@ -816,6 +847,7 @@ async function criarComentario(req, res) {
   console.log('📝 Recebido pedido de criar comentário:', { resenhaId, usuarioId, parentId, nota, texto: texto?.substring(0, 50) });
   
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     if (!resenhaId || !usuarioId || !texto) {
       console.error('❌ Campos faltando:', { resenhaId, usuarioId, textoExists: !!texto });
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
@@ -865,6 +897,9 @@ async function deletarComentario(req, res) {
   console.log('🗑️  Deletando comentário:', comentarioId);
   
   try {
+    const comentario = await getComentarioById(comentarioId);
+    if (!comentario) return res.status(404).json({ error: 'Comentário não encontrado' });
+    if (denyIfNotOwner(req, res, comentario.usuarioId)) return;
     await deleteComentario(comentarioId);
     console.log('✅ Comentário deletado com sucesso');
     return res.json({ message: 'Comentário deletado com sucesso' });
@@ -978,6 +1013,7 @@ async function criarDenuncia(req, res) {
   console.log('📨 Recebendo denúncia:', { usuarioId, comentarioId, motivo });
   
   try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
     if (!usuarioId || !comentarioId || !motivo) {
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }

@@ -86,7 +86,7 @@ export default function PgResenha() {
       console.log('🔍 Carregando dados para livroId:', livroId);
       
       // Buscar dados completos do livro primeiro
-      const livroRes = await api.get(`/admin/livros/${livroId}`);
+      const livroRes = await api.get(`/livros/${livroId}`);
       console.log('📚 Livro carregado:', livroRes.data);
       setLivroCompleto(livroRes.data);
       

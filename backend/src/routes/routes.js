@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { registrarUsuario, logarUsuario, logarAdmin, solicitarRecuperacaoSenha, redefinirSenha, obterUsuarioPorEmail, listarUsuarios, buscarUsuarioPorId, atualizarUsuario, deletarUsuario, criarLivro, listarLivros, buscarLivroPorId, atualizarLivro, deletarLivro, criarResenha, listarResenhas, listarResenhasPorLivro, buscarResenhaPorId, atualizarResenha, deletarResenha, adicionarFavorito, removerFavorito, listarFavoritosUsuario, verificarFavorito, salvarLeitura, listarLeiturasUsuario, removerLeituraUsuario, uploadFotoPerfil, curtirResenha, descurtirResenha, verificarCurtidaResenha, avaliarResenha, obterAvaliacaoResenha, criarComentario, listarComentariosResenha, deletarComentario, buscar, listarTodosComentarios, atualizarComentarioAdmin, deletarComentarioAdmin, criarDenuncia, listarDenuncias, atualizarStatusDenunciaCtrl, deletarDenunciaCtrl } = require('../controllers/controller');
 const { uploadBooks, uploadPerfil } = require('../config/multer');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const router = Router();
 
@@ -25,70 +26,81 @@ router.post('/login', logarUsuario);
 router.post('/admin/login', logarAdmin);
 router.post('/auth/forgot-password', solicitarRecuperacaoSenha);
 router.post('/auth/reset-password', redefinirSenha);
-router.get('/usuario/:email', obterUsuarioPorEmail);
+router.get('/usuario/:email', requireAuth, requireAdmin, obterUsuarioPorEmail);
+router.get('/me', requireAuth, (req, res) => {
+  req.params.id = String(req.auth.userId);
+  return buscarUsuarioPorId(req, res);
+});
+router.put('/me', requireAuth, (req, res) => {
+  req.params.id = String(req.auth.userId);
+  return atualizarUsuario(req, res);
+});
 
 // Rotas de administração de usuários
-router.get('/admin/usuarios', listarUsuarios);
-router.get('/admin/usuarios/:id', buscarUsuarioPorId);
-router.put('/admin/usuarios/:id', atualizarUsuario);
-router.delete('/admin/usuarios/:id', deletarUsuario);
+router.get('/admin/usuarios', requireAuth, requireAdmin, listarUsuarios);
+router.get('/admin/usuarios/:id', requireAuth, requireAdmin, buscarUsuarioPorId);
+router.put('/admin/usuarios/:id', requireAuth, requireAdmin, atualizarUsuario);
+router.delete('/admin/usuarios/:id', requireAuth, requireAdmin, deletarUsuario);
 
 // Rotas de administração de livros
-router.post('/admin/livros', uploadBooks.fields([{ name: 'fotoCapa', maxCount: 1 }, { name: 'galeria', maxCount: 10 }]), criarLivro);
-router.get('/admin/livros', listarLivros);
-router.get('/admin/livros/:id', buscarLivroPorId);
-router.put('/admin/livros/:id', uploadBooks.fields([{ name: 'fotoCapa', maxCount: 1 }, { name: 'galeria', maxCount: 10 }]), atualizarLivro);
-router.delete('/admin/livros/:id', deletarLivro);
+router.post('/admin/livros', requireAuth, requireAdmin, uploadBooks.fields([{ name: 'fotoCapa', maxCount: 1 }, { name: 'galeria', maxCount: 10 }]), criarLivro);
+router.get('/admin/livros', requireAuth, requireAdmin, listarLivros);
+router.get('/admin/livros/:id', requireAuth, requireAdmin, buscarLivroPorId);
+router.put('/admin/livros/:id', requireAuth, requireAdmin, uploadBooks.fields([{ name: 'fotoCapa', maxCount: 1 }, { name: 'galeria', maxCount: 10 }]), atualizarLivro);
+router.delete('/admin/livros/:id', requireAuth, requireAdmin, deletarLivro);
+
+router.get('/livros', listarLivros);
+router.get('/livros/:id', buscarLivroPorId);
 
 // Rotas de resenhas
-router.post('/resenhas', criarResenha);
+router.post('/resenhas', requireAuth, criarResenha);
 router.get('/resenhas', listarResenhas);
 router.get('/resenhas/livro/:livroId', listarResenhasPorLivro);
 router.get('/resenhas/:id', buscarResenhaPorId);
-router.put('/resenhas/:id', atualizarResenha);
-router.delete('/resenhas/:id', deletarResenha);
+router.put('/resenhas/:id', requireAuth, atualizarResenha);
+router.delete('/resenhas/:id', requireAuth, deletarResenha);
 
 // Rotas admin de resenhas
-router.get('/admin/resenhas', listarResenhas);
-router.put('/admin/resenhas/:id', atualizarResenha);
-router.delete('/admin/resenhas/:id', deletarResenha);
+router.get('/admin/resenhas', requireAuth, requireAdmin, listarResenhas);
+router.put('/admin/resenhas/:id', requireAuth, requireAdmin, atualizarResenha);
+router.delete('/admin/resenhas/:id', requireAuth, requireAdmin, deletarResenha);
 
 // Rotas de favoritos
-router.post('/favoritos', adicionarFavorito);
-router.delete('/favoritos/:usuarioId/:livroId', removerFavorito);
-router.get('/favoritos/:usuarioId', listarFavoritosUsuario);
-router.get('/favoritos/:usuarioId/:livroId', verificarFavorito);
+router.post('/favoritos', requireAuth, adicionarFavorito);
+router.delete('/favoritos/:usuarioId/:livroId', requireAuth, removerFavorito);
+router.get('/favoritos/:usuarioId', requireAuth, listarFavoritosUsuario);
+router.get('/favoritos/:usuarioId/:livroId', requireAuth, verificarFavorito);
 
 // Rotas de leituras
-router.post('/leituras', salvarLeitura);
-router.get('/leituras/:usuarioId', listarLeiturasUsuario);
-router.delete('/leituras/:usuarioId/:livroId', removerLeituraUsuario);
+router.post('/leituras', requireAuth, salvarLeitura);
+router.get('/leituras/:usuarioId', requireAuth, listarLeiturasUsuario);
+router.delete('/leituras/:usuarioId/:livroId', requireAuth, removerLeituraUsuario);
 
 // Rota de upload de foto de perfil
-router.post('/upload/foto-perfil', handleUploadPerfil, uploadFotoPerfil);
+router.post('/upload/foto-perfil', requireAuth, handleUploadPerfil, uploadFotoPerfil);
 
 // Rotas de curtidas em resenhas
-router.post('/resenhas/:resenhaId/curtir', curtirResenha);
-router.delete('/resenhas/:resenhaId/curtir', descurtirResenha);
-router.get('/resenhas/:resenhaId/curtir/:usuarioId', verificarCurtidaResenha);
-router.post('/resenhas/:resenhaId/avaliacoes', avaliarResenha);
+router.post('/resenhas/:resenhaId/curtir', requireAuth, curtirResenha);
+router.delete('/resenhas/:resenhaId/curtir', requireAuth, descurtirResenha);
+router.get('/resenhas/:resenhaId/curtir/:usuarioId', requireAuth, verificarCurtidaResenha);
+router.post('/resenhas/:resenhaId/avaliacoes', requireAuth, avaliarResenha);
 router.get('/resenhas/:resenhaId/avaliacoes', obterAvaliacaoResenha);
 
 // Rotas de comentários
-router.post('/comentarios', criarComentario);
+router.post('/comentarios', requireAuth, criarComentario);
 router.get('/resenhas/:resenhaId/comentarios', listarComentariosResenha);
-router.delete('/comentarios/:comentarioId', deletarComentario);
+router.delete('/comentarios/:comentarioId', requireAuth, deletarComentario);
 
 // Rotas admin de comentários
-router.get('/admin/comentarios', listarTodosComentarios);
-router.put('/admin/comentarios/:comentarioId', atualizarComentarioAdmin);
-router.delete('/admin/comentarios/:comentarioId', deletarComentarioAdmin);
+router.get('/admin/comentarios', requireAuth, requireAdmin, listarTodosComentarios);
+router.put('/admin/comentarios/:comentarioId', requireAuth, requireAdmin, atualizarComentarioAdmin);
+router.delete('/admin/comentarios/:comentarioId', requireAuth, requireAdmin, deletarComentarioAdmin);
 
 // Rotas de denúncias de comentários
-router.post('/denuncias', criarDenuncia);
-router.get('/admin/denuncias', listarDenuncias);
-router.put('/admin/denuncias/:denunciaId', atualizarStatusDenunciaCtrl);
-router.delete('/admin/denuncias/:denunciaId', deletarDenunciaCtrl);
+router.post('/denuncias', requireAuth, criarDenuncia);
+router.get('/admin/denuncias', requireAuth, requireAdmin, listarDenuncias);
+router.put('/admin/denuncias/:denunciaId', requireAuth, requireAdmin, atualizarStatusDenunciaCtrl);
+router.delete('/admin/denuncias/:denunciaId', requireAuth, requireAdmin, deletarDenunciaCtrl);
 
 // Busca
 router.get('/search', buscar);

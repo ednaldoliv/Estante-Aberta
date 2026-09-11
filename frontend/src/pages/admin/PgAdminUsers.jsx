@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminUsers.module.css';
-import api from '../../services/api';
+import api, { API_ORIGIN } from '../../services/api';
 
 export function PgAdminUsers() {
   const navigate = useNavigate();
@@ -231,9 +231,6 @@ export function PgAdminUsers() {
             <h1 className={styles.pageTitle}>Gerenciar Usuários</h1>
             <p className={styles.pageSubtitle}>Total: {usuarios.length} usuários cadastrados</p>
           </div>
-          <button className={styles.createButton} onClick={() => setShowCreateModal(true)}>
-            + Criar Usuário
-          </button>
         </header>
 
         {loading && <div className={styles.loading}>Carregando usuários...</div>}
@@ -367,7 +364,7 @@ export function PgAdminUsers() {
           </div>
         )}
 
-        {showCreateModal && (
+        {false && showCreateModal && (
           <div className={styles.modal} onClick={() => setShowCreateModal(false)}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>

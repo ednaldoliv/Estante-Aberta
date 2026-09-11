@@ -6,7 +6,6 @@ import { API_ORIGIN } from '../../services/api';
 export function PgAdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [accessKey, setAccessKey] = useState('');
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +19,7 @@ export function PgAdminLogin() {
       const response = await fetch(`${API_ORIGIN}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha: password, accessKey })
+        body: JSON.stringify({ email, senha: password })
       });
 
       const data = await response.json();
@@ -92,22 +91,6 @@ export function PgAdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-            />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="accessKey" className={styles.label}>
-              Chave de Acesso
-            </label>
-            <input
-              type="password"
-              id="accessKey"
-              className={styles.input}
-              placeholder="Chave secreta"
-              value={accessKey}
-              onChange={(e) => setAccessKey(e.target.value)}
-              required
-              autoComplete="off"
             />
           </div>
 

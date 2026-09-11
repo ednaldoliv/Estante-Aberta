@@ -1,6 +1,23 @@
 export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 export const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, '');
 
+export function installAuthenticatedFetch() {
+  const nativeFetch = window.fetch.bind(window);
+  window.fetch = (input, init = {}) => {
+    const url = typeof input === 'string' ? input : input?.url;
+    const isApiRequest = typeof url === 'string' && (url.startsWith(BASE_URL) || url.startsWith(API_ORIGIN));
+    if (!isApiRequest) return nativeFetch(input, init);
+
+    const stored = localStorage.getItem('admin') || localStorage.getItem('user');
+    const token = stored ? JSON.parse(stored)?.token : null;
+    if (!token) return nativeFetch(input, init);
+
+    const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
+    headers.set('Authorization', `Bearer ${token}`);
+    return nativeFetch(input, { ...init, headers });
+  };
+}
+
 export function assetUrl(path) {
   if (!path) return '';
   if (/^https?:\/\//i.test(path)) return path;
@@ -54,11 +71,6 @@ export async function resetPassword({ token, novaSenha, confirmarSenha }) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, novaSenha, confirmarSenha })
   });
-  return handleResponse(res);
-}
-
-export async function fetchUserByEmail(email) {
-  const res = await fetch(`${BASE_URL}/usuario/${encodeURIComponent(email)}`);
   return handleResponse(res);
 }
 

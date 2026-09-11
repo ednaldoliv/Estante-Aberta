@@ -5,21 +5,6 @@ async function createUser(data) {
   return prisma.usuario.create({ data });
 }
 
-async function getNextAvailableUserId() {
-  const usuarios = await prisma.usuario.findMany({
-    select: { id: true },
-    orderBy: { id: 'asc' }
-  });
-
-  let nextId = 1;
-  for (const usuario of usuarios) {
-    if (usuario.id !== nextId) break;
-    nextId += 1;
-  }
-
-  return nextId;
-}
-
 async function getNextAvailableComentarioId() {
   const comentarios = await prisma.comentario.findMany({
     select: { id: true },
@@ -65,14 +50,15 @@ async function createBook(data) {
   return prisma.livro.create({ data });
 }
 
-async function getAllBooks() {
+async function getAllBooks(includeInactive = false) {
   return prisma.livro.findMany({
+    where: includeInactive ? undefined : { ativo: true },
     orderBy: { createdAt: 'desc' }
   });
 }
 
-async function getBookById(id) {
-  return prisma.livro.findUnique({ where: { id: parseInt(id) } });
+async function getBookById(id, includeInactive = false) {
+  return prisma.livro.findFirst({ where: { id: parseInt(id), ...(includeInactive ? {} : { ativo: true }) } });
 }
 
 async function updateBook(id, data) {
@@ -125,8 +111,9 @@ async function createResenha(data) {
   });
 }
 
-async function getAllResenhas() {
+async function getAllResenhas(includeInactive = false) {
   return prisma.resenha.findMany({
+    where: includeInactive ? undefined : { ativo: true },
     include: {
       livro: true,
       usuario: {
@@ -160,7 +147,7 @@ async function getResenhasByLivroId(livroId) {
   });
 }
 
-async function getResenhaById(id) {
+async function getResenhaById(id, includeInactive = false) {
   return prisma.resenha.findUnique({ 
     where: { id: parseInt(id) },
     include: {
@@ -173,7 +160,7 @@ async function getResenhaById(id) {
         }
       }
     }
-  });
+  }).then((resenha) => (!includeInactive && resenha?.ativo === false ? null : resenha));
 }
 
 async function updateResenha(id, data) {
@@ -805,7 +792,6 @@ async function deleteDenunciaComentario(denunciaId) {
 
 module.exports = { 
   createUser, 
-  getNextAvailableUserId,
   getNextAvailableComentarioId,
   findUserByEmail, 
   getAllUsers, 

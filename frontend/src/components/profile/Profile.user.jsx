@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
-import { fetchUserByEmail } from '../../services/api';
 import { assetUrl } from '../../services/api';
 
 export function Profile() {
@@ -46,27 +45,6 @@ export function Profile() {
       window.removeEventListener('adminChange', handleUserChange);
     };
   }, []);
-
-  // Buscar nome se ausente
-  useEffect(() => {
-    async function completarNome() {
-      if (user && !isAdmin && (!user.nome || user.nome.trim() === '')) {
-        try {
-          const completo = await fetchUserByEmail(user.email);
-          if (completo && completo.nome) {
-            const atualizado = { ...user, nome: completo.nome };
-            localStorage.setItem('user', JSON.stringify(atualizado));
-            setUser(atualizado);
-            window.dispatchEvent(new Event('userChange'));
-          }
-        } catch (e) {
-          // Silenciar erro para não quebrar UI
-          console.warn('Não foi possível completar nome:', e.message);
-        }
-      }
-    }
-    completarNome();
-  }, [user, isAdmin]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

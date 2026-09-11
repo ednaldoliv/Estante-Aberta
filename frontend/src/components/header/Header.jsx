@@ -44,7 +44,7 @@ export function Header() {
     try {
       const endpoint = normalizedQuery
         ? `/api/search?q=${encodeURIComponent(normalizedQuery)}`
-        : '/api/admin/livros'
+        : '/api/livros'
       const res = await fetch(`${API_ORIGIN}${endpoint}`)
       const text = await res.text()
       const parsed = text ? JSON.parse(text) : null

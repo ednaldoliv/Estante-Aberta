@@ -1,6 +1,15 @@
 export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 export const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, '');
 
+function getStoredToken() {
+  try {
+    const stored = localStorage.getItem('admin') || localStorage.getItem('user');
+    return stored ? JSON.parse(stored)?.token || null : null;
+  } catch (_) {
+    return null;
+  }
+}
+
 export function installAuthenticatedFetch() {
   const nativeFetch = window.fetch.bind(window);
   window.fetch = (input, init = {}) => {
@@ -8,8 +17,7 @@ export function installAuthenticatedFetch() {
     const isApiRequest = typeof url === 'string' && (url.startsWith(BASE_URL) || url.startsWith(API_ORIGIN));
     if (!isApiRequest) return nativeFetch(input, init);
 
-    const stored = localStorage.getItem('admin') || localStorage.getItem('user');
-    const token = stored ? JSON.parse(stored)?.token : null;
+    const token = getStoredToken();
     if (!token) return nativeFetch(input, init);
 
     const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));

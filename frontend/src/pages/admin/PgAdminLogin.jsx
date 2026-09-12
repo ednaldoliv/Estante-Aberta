@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminLogin.module.css';
-import { API_ORIGIN } from '../../services/api';
+import api from '../../services/api';
 
 export function PgAdminLogin() {
   const [email, setEmail] = useState('');
@@ -16,17 +16,7 @@ export function PgAdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_ORIGIN}/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha: password })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao fazer login');
-      }
+      const { data } = await api.post('/admin/login', { email, senha: password });
 
       // Salvar dados do admin com flag
       localStorage.setItem('admin', JSON.stringify({ ...data, isAdmin: true }));

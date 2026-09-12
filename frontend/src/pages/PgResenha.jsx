@@ -608,7 +608,7 @@ export default function PgResenha() {
           <div className={styles.ratingPanel}>
             <div className={styles.ratingTopRow}>
               <div className={styles.ratingTopStars}>★★★★★</div>
-              <strong className={styles.ratingTopValue}>{ratingStats.media.toFixed(1).replace('.', ',')} de 5</strong>
+              <strong className={styles.ratingTopValue}>{ratingStats.media === 0 ? '0' : ratingStats.media.toFixed(1).replace('.', ',')} de 5</strong>
             </div>
             <p className={styles.ratingTotal}>{ratingStats.totalAvaliacoes} classificações globais</p>
 

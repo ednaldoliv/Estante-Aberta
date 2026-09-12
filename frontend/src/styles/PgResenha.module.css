@@ -646,7 +646,8 @@
 }
 
 .replyButton,
-.reportButton {
+.reportButton,
+.deleteCommentButton {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -660,6 +661,10 @@
 
 .reportButton {
   color: #c67d2f;
+}
+
+.deleteCommentButton {
+  color: #c85353;
 }
 
 .replyForm {

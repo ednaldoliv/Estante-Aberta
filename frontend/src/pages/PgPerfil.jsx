@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/PgPerfil.module.css';
-import { API_ORIGIN, assetUrl } from '../services/api';
+import { BASE_URL, assetUrl } from '../services/api';
 
 export default function PgPerfil() {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export default function PgPerfil() {
 
   const loadUserData = async (userId) => {
     try {
-      const response = await fetch(`${API_ORIGIN}/me`);
+      const response = await fetch(`${BASE_URL}/me`);
       if (response.ok) {
         const data = await response.json();
         setAccountData({
@@ -76,7 +76,7 @@ export default function PgPerfil() {
   const loadFavoritos = async (userId) => {
     setLoadingFavoritos(true);
     try {
-      const response = await fetch(`${API_ORIGIN}/favoritos/${userId}`);
+      const response = await fetch(`${BASE_URL}/favoritos/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setFavoritos(data);
@@ -91,7 +91,7 @@ export default function PgPerfil() {
   const loadLeituras = async (userId) => {
     setLoadingLeituras(true);
     try {
-      const response = await fetch(`${API_ORIGIN}/leituras/${userId}`);
+      const response = await fetch(`${BASE_URL}/leituras/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setLeituras(data);
@@ -106,7 +106,7 @@ export default function PgPerfil() {
   const loadCatalogoLivros = async () => {
     setLoadingCatalogo(true);
     try {
-      const response = await fetch(`${API_ORIGIN}/livros`);
+      const response = await fetch(`${BASE_URL}/livros`);
       if (response.ok) {
         const data = await response.json();
         setCatalogoLivros((data || []).filter((livro) => livro.ativo !== false));
@@ -125,7 +125,7 @@ export default function PgPerfil() {
 
   const salvarLeitura = async (livroId) => {
     try {
-      const response = await fetch(`${API_ORIGIN}/leituras`, {
+      const response = await fetch(`${BASE_URL}/leituras`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -152,7 +152,7 @@ export default function PgPerfil() {
 
   const removerLeitura = async (livroId) => {
     try {
-      const response = await fetch(`${API_ORIGIN}/leituras/${user.id}/${livroId}`, {
+      const response = await fetch(`${BASE_URL}/leituras/${user.id}/${livroId}`, {
         method: 'DELETE'
       });
 
@@ -170,7 +170,7 @@ export default function PgPerfil() {
 
   const handleRemoveFavorito = async (livroId) => {
     try {
-      const response = await fetch(`${API_ORIGIN}/favoritos/${user.id}/${livroId}`, {
+      const response = await fetch(`${BASE_URL}/favoritos/${user.id}/${livroId}`, {
         method: 'DELETE'
       });
 
@@ -214,7 +214,7 @@ export default function PgPerfil() {
       formData.append('fotoPerfil', photoFile);
       formData.append('usuarioId', user.id);
 
-      const response = await fetch(`${API_ORIGIN}/upload/foto-perfil`, {
+      const response = await fetch(`${BASE_URL}/upload/foto-perfil`, {
         method: 'POST',
         body: formData
       });
@@ -265,7 +265,7 @@ export default function PgPerfil() {
         bio: accountData.bio
       };
 
-      const response = await fetch(`${API_ORIGIN}/me`, {
+      const response = await fetch(`${BASE_URL}/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -350,7 +350,7 @@ export default function PgPerfil() {
         cpf: accountData.cpf.replace(/\D/g, '')
       };
 
-      const response = await fetch(`${API_ORIGIN}/me`, {
+      const response = await fetch(`${BASE_URL}/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -398,7 +398,7 @@ export default function PgPerfil() {
     }
 
     try {
-      const response = await fetch(`${API_ORIGIN}/me`, {
+      const response = await fetch(`${BASE_URL}/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ senhaAtual: passwordData.senhaAtual, senha: passwordData.novaSenha })

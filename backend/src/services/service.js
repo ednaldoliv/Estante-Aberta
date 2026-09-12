@@ -456,6 +456,87 @@ async function getComentariosByResenhaId(resenhaId) {
   }
 }
 
+async function createComentarioWithAvaliacao(usuarioId, resenhaId, texto, nota = null, parentId = null) {
+  return prisma.$transaction(async (tx) => {
+    const parsedUsuarioId = parseInt(usuarioId);
+    const parsedResenhaId = parseInt(resenhaId);
+    const notaNormalizada = nota !== null ? parseInt(nota) : null;
+    const parsedParentId = parentId !== null && parentId !== undefined ? parseInt(parentId) : null;
+
+    if (parsedParentId !== null) {
+      const parent = await tx.comentario.findUnique({
+        where: { id: parsedParentId },
+        select: { resenhaId: true }
+      });
+      if (!parent) throw new Error('Parent comment not found');
+      if (parent.resenhaId !== parsedResenhaId) {
+        throw new Error('Parent comment belongs to another review');
+      }
+    }
+
+    if (notaNormalizada !== null) {
+      const [avaliacaoAtiva, comentarioAvaliado] = await Promise.all([
+        tx.avaliacaoResenha.findUnique({
+          where: {
+            usuarioId_resenhaId: {
+              usuarioId: parsedUsuarioId,
+              resenhaId: parsedResenhaId
+            }
+          },
+          select: { id: true }
+        }),
+        tx.comentario.findFirst({
+        where: { usuarioId: parsedUsuarioId, resenhaId: parsedResenhaId, nota: { not: null } },
+        select: { id: true }
+        })
+      ]);
+      if (avaliacaoAtiva || comentarioAvaliado) {
+        throw new Error('Você já possui uma avaliação ativa nesta resenha');
+      }
+    }
+
+    const comentario = await tx.comentario.create({
+      data: {
+        usuarioId: parsedUsuarioId,
+        resenhaId: parsedResenhaId,
+        parentId: parsedParentId,
+        texto,
+        nota: notaNormalizada
+      },
+      include: { usuario: { select: { id: true, nome: true, fotoPerfil: true } } }
+    });
+
+    if (notaNormalizada !== null) {
+      await tx.avaliacaoResenha.create({
+        data: { usuarioId: parsedUsuarioId, resenhaId: parsedResenhaId, nota: notaNormalizada }
+      });
+    }
+    return comentario;
+  });
+}
+
+async function deleteComentarioWithAvaliacao(comentarioId) {
+  const parsedComentarioId = parseInt(comentarioId);
+  return prisma.$transaction(async (tx) => {
+    const comentario = await tx.comentario.findUnique({
+      where: { id: parsedComentarioId },
+      select: { id: true, usuarioId: true, resenhaId: true, nota: true }
+    });
+    if (!comentario) throw new Error('Comentário não encontrado');
+    await tx.comentario.updateMany({
+      where: { parentId: parsedComentarioId },
+      data: { parentId: null }
+    });
+    const deleted = await tx.comentario.delete({ where: { id: parsedComentarioId } });
+    if (comentario.nota !== null) {
+      await tx.avaliacaoResenha.deleteMany({
+        where: { usuarioId: comentario.usuarioId, resenhaId: comentario.resenhaId }
+      });
+    }
+    return deleted;
+  });
+}
+
 async function cleanupAvaliacaoByComentario(usuarioId, resenhaId) {
   const remainingComentarios = await prisma.comentario.count({
     where: {
@@ -482,18 +563,27 @@ async function deleteComentario(comentarioId) {
     const parsedComentarioId = parseInt(comentarioId);
     const comentario = await prisma.comentario.findUnique({
       where: { id: parsedComentarioId },
-      select: { id: true, usuarioId: true, resenhaId: true }
+      select: { id: true, usuarioId: true, resenhaId: true, nota: true }
     });
 
     if (!comentario) {
       throw new Error('Comentário não encontrado');
     }
 
+    await prisma.comentario.updateMany({
+      where: { parentId: parsedComentarioId },
+      data: { parentId: null }
+    });
+
     const resultado = await prisma.comentario.delete({
       where: { id: parsedComentarioId }
     });
 
-    await cleanupAvaliacaoByComentario(comentario.usuarioId, comentario.resenhaId);
+    if (comentario.nota !== null) {
+      await prisma.avaliacaoResenha.deleteMany({
+        where: { usuarioId: comentario.usuarioId, resenhaId: comentario.resenhaId }
+      });
+    }
     
     console.log('✅ Comentário deletado');
     return resultado;
@@ -802,8 +892,10 @@ module.exports = {
   getAvaliacaoStatsByResenhaId,
   searchLivros,
   createComentario,
+  createComentarioWithAvaliacao,
   getComentariosByResenhaId,
   deleteComentario,
+  deleteComentarioWithAvaliacao,
   getComentarioById,
   getAllComentariosAdmin,
   updateComentarioAdmin,

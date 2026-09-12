@@ -75,13 +75,6 @@ export function Profile() {
     return email.charAt(0).toUpperCase();
   };
 
-  const getAvatarColor = (email) => {
-    if (!email) return '#1a73e8';
-    const colors = ['#1a73e8', '#e37400', '#0d652d', '#c5221f', '#9334e6', '#188038'];
-    const index = email.charCodeAt(0) % colors.length;
-    return colors[index];
-  };
-
   if (!user) return null;
 
   return (
@@ -89,18 +82,23 @@ export function Profile() {
       <button
         className={styles.avatarButton}
         onClick={() => setIsOpen(!isOpen)}
-        style={user.fotoPerfil ? {} : { backgroundColor: getAvatarColor(user.email) }}
-        aria-label="Conta do Google"
+        aria-label="Abrir menu do perfil"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        title="Menu do perfil"
       >
-        {user.fotoPerfil ? (
+        <span className={styles.avatarVisual}>{user.fotoPerfil ? (
           <img 
             src={assetUrl(user.fotoPerfil)} 
-            alt="Foto de perfil" 
+            alt=""
             className={styles.avatarImage}
           />
         ) : (
           getInitials(user.email, user.nome)
-        )}
+        )}</span>
+        <svg className={styles.avatarChevron} viewBox="0 0 16 16" aria-hidden="true">
+          <path d="m4 6 4 4 4-4" />
+        </svg>
       </button>
 
       {isOpen && (
@@ -108,7 +106,6 @@ export function Profile() {
           <div className={styles.dropdownHeader}>
             <div
               className={styles.dropdownAvatar}
-              style={user.fotoPerfil ? {} : { backgroundColor: getAvatarColor(user.email) }}
             >
               {user.fotoPerfil ? (
                 <img 

@@ -25,6 +25,16 @@ function StarRating({ value = 0 }) {
   );
 }
 
+function formatRatingAverage(value) {
+  const average = Number(value) || 0;
+  if (average === 0) return '0';
+  if (Number.isInteger(average)) return String(average);
+  return average.toLocaleString('pt-BR', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
+}
+
 export default function PgResenha() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -222,7 +232,7 @@ export default function PgResenha() {
       return;
     }
 
-    if (!selectedRating || selectedRating < 1 || selectedRating > 5) {
+    if (selectedRating && (selectedRating < 1 || selectedRating > 5)) {
       alert('Escolha de 1 a 5 estrelas para publicar seu comentário.');
       return;
     }
@@ -234,23 +244,13 @@ export default function PgResenha() {
         resenhaId: resenha.id,
         usuarioId: user.id,
         texto: comentarioLimpo,
-        nota: selectedRating
-      });
-
-      const avaliacaoRes = await api.post(`/resenhas/${resenha.id}/avaliacoes`, {
-        usuarioId: user.id,
-        nota: selectedRating
+        nota: !userRating && selectedRating ? selectedRating : undefined
       });
 
       console.log('✅ Comentário e avaliação enviados com sucesso');
       setComments((s) => [comentarioRes.data, ...s]);
       setCommentText("");
-      setUserRating(avaliacaoRes.data?.userRating || selectedRating);
-      setRatingStats({
-        media: avaliacaoRes.data?.media || 0,
-        totalAvaliacoes: avaliacaoRes.data?.totalAvaliacoes || 0,
-        distribution: avaliacaoRes.data?.distribution || ratingStats.distribution
-      });
+      await carregarAvaliacoes(resenha.id, user.id);
       setSelectedRating(0);
       setHoverRating(0);
     } catch (error) {
@@ -290,7 +290,27 @@ export default function PgResenha() {
     }
   }
 
+  async function handleDeleteComment(comentarioId) {
+    if (!window.confirm('Deseja excluir este comentário? Esta ação não pode ser desfeita.')) return;
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id || !resenha?.id) return;
+
+    try {
+      await api.delete(`/comentarios/${comentarioId}`);
+      const comentariosRes = await api.get(`/resenhas/${resenha.id}/comentarios`);
+      setComments(comentariosRes.data || []);
+      await carregarAvaliacoes(resenha.id, user.id);
+      setSelectedRating(0);
+      setHoverRating(0);
+    } catch (error) {
+      console.error('Erro ao excluir comentário:', error);
+      alert(error.response?.data?.error || 'Não foi possível excluir o comentário.');
+    }
+  }
+
   function renderComment(c, isReply = false) {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
     const nomeUsuario = c.usuario?.nome || 'Anônimo';
     const fotoUsuario = c.usuario?.fotoPerfil
       ? assetUrl(c.usuario.fotoPerfil)
@@ -330,6 +350,15 @@ export default function PgResenha() {
           >
             🚩 Denunciar comentário
           </button>
+          {currentUser.id === c.usuarioId && (
+            <button
+              type="button"
+              onClick={() => handleDeleteComment(c.id)}
+              className={styles.deleteCommentButton}
+            >
+              Excluir comentário
+            </button>
+          )}
         </div>
 
         {replyingToId === c.id && (
@@ -608,7 +637,7 @@ export default function PgResenha() {
           <div className={styles.ratingPanel}>
             <div className={styles.ratingTopRow}>
               <div className={styles.ratingTopStars}>★★★★★</div>
-              <strong className={styles.ratingTopValue}>{ratingStats.media === 0 ? '0' : ratingStats.media.toFixed(1).replace('.', ',')} de 5</strong>
+              <strong className={styles.ratingTopValue}>{formatRatingAverage(ratingStats.media)} de 5</strong>
             </div>
             <p className={styles.ratingTotal}>{ratingStats.totalAvaliacoes} classificações globais</p>
 
@@ -663,7 +692,7 @@ export default function PgResenha() {
                       <div className={styles.commentActions}>
                         <button type="submit" className={styles.postButton}>Publicar</button>
                       </div>
-                      <div className={styles.commentRatingRow}>
+                      {!userRating && <div className={styles.commentRatingRow}>
                         <span className={styles.commentRatingLabel}>Sua nota para publicar:</span>
                         <div className={styles.ratingButtons}>
                           {[1, 2, 3, 4, 5].map((nota) => (
@@ -681,7 +710,7 @@ export default function PgResenha() {
                             </button>
                           ))}
                         </div>
-                      </div>
+                      </div>}
                     </div>
                   </form>
                 </div>

@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { registrarUsuario, logarUsuario, logarAdmin, solicitarRecuperacaoSenha, redefinirSenha, obterUsuarioPorEmail, listarUsuarios, buscarUsuarioPorId, atualizarUsuario, deletarUsuario, criarLivro, listarLivros, buscarLivroPorId, atualizarLivro, deletarLivro, criarResenha, listarResenhas, listarResenhasPorLivro, buscarResenhaPorId, atualizarResenha, deletarResenha, adicionarFavorito, removerFavorito, listarFavoritosUsuario, verificarFavorito, salvarLeitura, listarLeiturasUsuario, removerLeituraUsuario, uploadFotoPerfil, curtirResenha, descurtirResenha, verificarCurtidaResenha, avaliarResenha, obterAvaliacaoResenha, criarComentario, listarComentariosResenha, deletarComentario, buscar, listarTodosComentarios, atualizarComentarioAdmin, deletarComentarioAdmin, criarDenuncia, listarDenuncias, atualizarStatusDenunciaCtrl, deletarDenunciaCtrl } = require('../controllers/controller');
 const { uploadBooks, uploadPerfil } = require('../config/multer');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { criarComentarioComAvaliacao, deletarComentarioComAvaliacao } = require('../controllers/controller');
 
 const router = Router();
 
@@ -83,13 +84,12 @@ router.post('/upload/foto-perfil', requireAuth, handleUploadPerfil, uploadFotoPe
 router.post('/resenhas/:resenhaId/curtir', requireAuth, curtirResenha);
 router.delete('/resenhas/:resenhaId/curtir', requireAuth, descurtirResenha);
 router.get('/resenhas/:resenhaId/curtir/:usuarioId', requireAuth, verificarCurtidaResenha);
-router.post('/resenhas/:resenhaId/avaliacoes', requireAuth, avaliarResenha);
 router.get('/resenhas/:resenhaId/avaliacoes', obterAvaliacaoResenha);
 
 // Rotas de comentários
-router.post('/comentarios', requireAuth, criarComentario);
+router.post('/comentarios', requireAuth, criarComentarioComAvaliacao);
 router.get('/resenhas/:resenhaId/comentarios', listarComentariosResenha);
-router.delete('/comentarios/:comentarioId', requireAuth, deletarComentario);
+router.delete('/comentarios/:comentarioId', requireAuth, deletarComentarioComAvaliacao);
 
 // Rotas admin de comentários
 router.get('/admin/comentarios', requireAuth, requireAdmin, listarTodosComentarios);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminUsers.module.css';
-import api, { API_ORIGIN } from '../../services/api';
+import api, { BASE_URL } from '../../services/api';
 
 export function PgAdminUsers() {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ export function PgAdminUsers() {
         cpf: formData.cpf.replace(/\D/g, '')
       };
       
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${id}`, {
+      const response = await fetch(`${BASE_URL}/admin/usuarios/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
@@ -124,7 +124,7 @@ export function PgAdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_ORIGIN}/admin/usuarios/${id}`, {
+      const response = await fetch(`${BASE_URL}/admin/usuarios/${id}`, {
         method: 'DELETE'
       });
 
@@ -147,7 +147,7 @@ export function PgAdminUsers() {
         cpf: newUser.cpf.replace(/\D/g, '')
       };
       
-      const response = await fetch(`${API_ORIGIN}/registro`, {
+      const response = await fetch(`${BASE_URL}/registro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userToCreate)

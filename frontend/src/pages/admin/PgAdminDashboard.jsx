@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/admin/PgAdminDashboard.module.css';
-import { API_ORIGIN } from '../../services/api';
+import { BASE_URL } from '../../services/api';
 
 export function PgAdminDashboard() {
   const navigate = useNavigate();
@@ -35,16 +35,16 @@ export function PgAdminDashboard() {
   const carregarEstatisticas = async () => {
     try {
       // Carregar usuários
-      const usuariosResponse = await fetch(`${API_ORIGIN}/admin/usuarios`);
+      const usuariosResponse = await fetch(`${BASE_URL}/admin/usuarios`);
       if (usuariosResponse.ok) {
         const usuarios = await usuariosResponse.json();
         
         // Carregar livros
-        const livrosResponse = await fetch(`${API_ORIGIN}/admin/livros`);
+        const livrosResponse = await fetch(`${BASE_URL}/admin/livros`);
         const livros = livrosResponse.ok ? await livrosResponse.json() : [];
         
         // Carregar resenhas
-        const resenhasResponse = await fetch(`${API_ORIGIN}/admin/resenhas`);
+        const resenhasResponse = await fetch(`${BASE_URL}/admin/resenhas`);
         const resenhas = resenhasResponse.ok ? await resenhasResponse.json() : [];
         
         console.log('📊 Estatísticas carregadas:', {

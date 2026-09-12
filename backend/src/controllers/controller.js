@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { createUser, findUserByEmail, getAllUsers, getUserById, updateUser, deleteUser, createBook, getAllBooks, getBookById, updateBook, deleteBook, createResenha, getAllResenhas, getResenhasByLivroId, getResenhaById, updateResenha, deleteResenha, addFavorito, addOrUpdateLeitura, removeLeitura, getLeiturasByUsuarioId, removeFavorito, getFavoritosByUsuarioId, checkFavorito, addCurtidaResenha, removeCurtidaResenha, checkCurtidaResenha, addOrUpdateAvaliacaoResenha, getAvaliacaoStatsByResenhaId, searchLivros, createComentario, getComentariosByResenhaId, deleteComentario, getComentarioById, getAllComentariosAdmin, updateComentarioAdmin, deleteComentarioAdmin, criarDenunciaComentario, getDenunciasComentarios, atualizarStatusDenuncia, deleteDenunciaComentario } = require('../services/service');
 const { signUserToken } = require('../middleware/auth');
+const { createComentarioWithAvaliacao, deleteComentarioWithAvaliacao } = require('../services/service');
 
 const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
 const passwordResetTokens = new Map();
@@ -990,8 +991,66 @@ module.exports = {
   criarDenuncia,
   listarDenuncias,
   atualizarStatusDenunciaCtrl,
-  deletarDenunciaCtrl
+  deletarDenunciaCtrl,
+  criarComentarioComAvaliacao,
+  deletarComentarioComAvaliacao
 };
+
+async function criarComentarioComAvaliacao(req, res) {
+  const { resenhaId, usuarioId, texto, nota, parentId } = req.body;
+  try {
+    if (denyIfNotOwner(req, res, usuarioId)) return;
+    if (!resenhaId || !usuarioId || !String(texto || '').trim()) {
+      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+    }
+
+    const isReply = parentId !== null && parentId !== undefined;
+    let notaNumero = null;
+    if (!isReply && nota !== null && nota !== undefined && nota !== '') {
+      notaNumero = Number(nota);
+      if (!Number.isInteger(notaNumero) || notaNumero < 1 || notaNumero > 5) {
+        return res.status(400).json({ error: 'A nota deve ser um número inteiro entre 1 e 5' });
+      }
+    }
+
+    const comentario = await createComentarioWithAvaliacao(
+      usuarioId,
+      resenhaId,
+      String(texto).trim(),
+      notaNumero,
+      isReply ? parentId : null
+    );
+    return res.status(201).json(comentario);
+  } catch (e) {
+    if (e.message === 'Você já possui uma avaliação ativa nesta resenha' || e.code === 'P2002') {
+      return res.status(409).json({ error: e.message });
+    }
+    if (
+      e.message === 'Comentário pai não encontrado' ||
+      e.message === 'Comentário pai não pertence à mesma resenha' ||
+      e.message === 'Parent comment not found' ||
+      e.message === 'Parent comment belongs to another review'
+    ) {
+      return res.status(400).json({ error: e.message });
+    }
+    console.error('Erro ao criar comentário:', e);
+    return res.status(500).json({ error: 'Erro ao criar comentário' });
+  }
+}
+
+async function deletarComentarioComAvaliacao(req, res) {
+  const { comentarioId } = req.params;
+  try {
+    const comentario = await getComentarioById(comentarioId);
+    if (!comentario) return res.status(404).json({ error: 'Comentário não encontrado' });
+    if (denyIfNotOwner(req, res, comentario.usuarioId)) return;
+    await deleteComentarioWithAvaliacao(comentarioId);
+    return res.json({ message: 'Comentário deletado com sucesso' });
+  } catch (e) {
+    console.error('Erro ao deletar comentário:', e);
+    return res.status(500).json({ error: 'Erro ao deletar comentário' });
+  }
+}
 
 // Controladores de Admin para Comentários
 async function listarTodosComentarios(req, res) {

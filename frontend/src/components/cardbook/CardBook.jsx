@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CardBook.module.css';
-import { API_ORIGIN } from '../../services/api';
+import { BASE_URL } from '../../services/api';
 
 export function CardBook({ id, image, title, author }) {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export function CardBook({ id, image, title, author }) {
 
   const checkFavorito = async (userId) => {
     try {
-      const response = await fetch(`${API_ORIGIN}/favoritos/${userId}/${id}`);
+      const response = await fetch(`${BASE_URL}/favoritos/${userId}/${id}`);
       if (response.ok) {
         const data = await response.json();
         setIsFavorito(data.isFavorito);
@@ -40,7 +40,7 @@ export function CardBook({ id, image, title, author }) {
     try {
       if (isFavorito) {
         // Remover favorito
-        const response = await fetch(`${API_ORIGIN}/favoritos/${user.id}/${id}`, {
+        const response = await fetch(`${BASE_URL}/favoritos/${user.id}/${id}`, {
           method: 'DELETE'
         });
         
@@ -49,7 +49,7 @@ export function CardBook({ id, image, title, author }) {
         }
       } else {
         // Adicionar favorito
-        const response = await fetch(`${API_ORIGIN}/favoritos`, {
+        const response = await fetch(`${BASE_URL}/favoritos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuarioId: user.id, livroId: id })

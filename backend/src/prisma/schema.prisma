@@ -91,7 +91,7 @@ model AvaliacaoResenha {
 }
 
 model Comentario {
-  id         Int      @id
+  id         Int      @id @default(autoincrement())
   resenhaId  Int
   usuarioId  Int
   parentId   Int?

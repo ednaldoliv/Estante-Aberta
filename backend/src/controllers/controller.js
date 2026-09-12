@@ -29,6 +29,30 @@ function denyIfNotOwner(req, res, userId) {
   return false;
 }
 
+function getListLimit(req, fallback = 100) {
+  const requested = Number.parseInt(req.query.limit, 10);
+  if (!Number.isInteger(requested) || requested < 1) return fallback;
+  return Math.min(requested, 100);
+}
+
+function removeBookFiles(paths) {
+  const uploadDir = path.resolve(__dirname, '../../uploads/books');
+  for (const filePath of paths.filter(Boolean)) {
+    if (!String(filePath).startsWith('/uploads/books/')) continue;
+    const resolved = path.resolve(__dirname, '../..', String(filePath).replace(/^\/+/, ''));
+    if (!resolved.startsWith(`${uploadDir}${path.sep}`)) continue;
+    try {
+      if (fs.existsSync(resolved)) fs.unlinkSync(resolved);
+    } catch (_) {
+      // A operação de banco permanece válida mesmo se a limpeza local falhar.
+    }
+  }
+}
+
+function getUploadedBookPaths(req) {
+  return Object.values(req.files || {}).flat().map((file) => `/uploads/books/${file.filename}`);
+}
+
 async function registrarUsuario(req, res) {
   const { nome, email, telefone, cpf, senha } = req.body;
   if (!nome || !email || !cpf || !senha || String(senha).length < 8) {
@@ -214,7 +238,7 @@ async function buscar(req, res) {
       return res.json({ results: [] });
     }
 
-    const livros = await searchLivros({ q });
+    const livros = await searchLivros({ q, take: getListLimit(req, 50) });
     return res.json({ results: livros });
   } catch (e) {
     console.error('Erro na busca:', e);
@@ -224,7 +248,7 @@ async function buscar(req, res) {
 
 async function listarUsuarios(req, res) {
   try {
-    const usuarios = await getAllUsers();
+    const usuarios = await getAllUsers(getListLimit(req));
     const usuariosSemSenha = usuarios.map(u => ({
       id: u.id,
       nome: u.nome,
@@ -370,6 +394,7 @@ async function criarLivro(req, res) {
 
     return res.status(201).json(livro);
   } catch (e) {
+    removeBookFiles(getUploadedBookPaths(req));
     console.error('Erro ao criar livro:', e);
     if (e.code === 'P2002') {
       return res.status(409).json({ error: 'ISBN já cadastrado' });
@@ -380,7 +405,7 @@ async function criarLivro(req, res) {
 
 async function listarLivros(req, res) {
   try {
-    const livros = await getAllBooks(Boolean(req.auth?.isAdmin));
+    const livros = await getAllBooks(Boolean(req.auth?.isAdmin), getListLimit(req));
     return res.json(livros);
   } catch (e) {
     console.error('Erro ao listar livros:', e);
@@ -408,6 +433,8 @@ async function atualizarLivro(req, res) {
     const { titulo, autor, ano, editora, paginas, isbn, categoria, sinopse, idioma, edicao, purchaseLinks, ativo } = req.body;
     
     const dataToUpdate = {};
+    const livroAtual = await getBookById(id, true);
+    if (!livroAtual) return res.status(404).json({ error: 'Livro não encontrado' });
     if (titulo !== undefined) dataToUpdate.titulo = titulo;
     if (autor !== undefined) dataToUpdate.autor = autor;
     if (ano !== undefined) dataToUpdate.ano = parseInt(ano);
@@ -430,13 +457,16 @@ async function atualizarLivro(req, res) {
     if (req.files && req.files.galeria) {
       const novasImagens = req.files.galeria.map(file => `/uploads/books/${file.filename}`);
       // Mesclar com galeria existente ou substituir
-      const livroAtual = await getBookById(id, true);
       dataToUpdate.galeria = [...livroAtual.galeria, ...novasImagens];
     }
 
     const livro = await updateBook(id, dataToUpdate);
+    if (dataToUpdate.fotoCapa && livroAtual.fotoCapa !== dataToUpdate.fotoCapa) {
+      removeBookFiles([livroAtual.fotoCapa]);
+    }
     return res.json(livro);
   } catch (e) {
+    removeBookFiles(getUploadedBookPaths(req));
     console.error('Erro ao atualizar livro:', e);
     if (e.code === 'P2002') {
       return res.status(409).json({ error: 'ISBN já cadastrado' });
@@ -477,7 +507,10 @@ function parsePurchaseLinks(value) {
 async function deletarLivro(req, res) {
   const { id } = req.params;
   try {
+    const livro = await getBookById(id, true);
+    if (!livro) return res.status(404).json({ error: 'Livro não encontrado' });
     await deleteBook(id);
+    removeBookFiles([livro.fotoCapa, ...(livro.galeria || [])]);
     return res.json({ message: 'Livro deletado com sucesso' });
   } catch (e) {
     console.error('Erro ao deletar livro:', e);
@@ -521,7 +554,7 @@ async function criarResenha(req, res) {
 
 async function listarResenhas(req, res) {
   try {
-    const resenhas = await getAllResenhas(Boolean(req.auth?.isAdmin));
+    const resenhas = await getAllResenhas(Boolean(req.auth?.isAdmin), getListLimit(req));
     return res.json(resenhas);
   } catch (e) {
     console.error('Erro ao listar resenhas:', e);
@@ -532,7 +565,7 @@ async function listarResenhas(req, res) {
 async function listarResenhasPorLivro(req, res) {
   const { livroId } = req.params;
   try {
-    const resenhas = await getResenhasByLivroId(livroId);
+    const resenhas = await getResenhasByLivroId(livroId, getListLimit(req));
     return res.json(resenhas);
   } catch (e) {
     console.error('Erro ao listar resenhas do livro:', e);

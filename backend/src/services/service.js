@@ -5,28 +5,14 @@ async function createUser(data) {
   return prisma.usuario.create({ data });
 }
 
-async function getNextAvailableComentarioId() {
-  const comentarios = await prisma.comentario.findMany({
-    select: { id: true },
-    orderBy: { id: 'asc' }
-  });
-
-  let nextId = 1;
-  for (const comentario of comentarios) {
-    if (comentario.id !== nextId) break;
-    nextId += 1;
-  }
-
-  return nextId;
-}
-
 async function findUserByEmail(email) {
   return prisma.usuario.findUnique({ where: { email } });
 }
 
-async function getAllUsers() {
+async function getAllUsers(take = 100) {
   return prisma.usuario.findMany({
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    take
   });
 }
 
@@ -50,10 +36,11 @@ async function createBook(data) {
   return prisma.livro.create({ data });
 }
 
-async function getAllBooks(includeInactive = false) {
+async function getAllBooks(includeInactive = false, take = 100) {
   return prisma.livro.findMany({
     where: includeInactive ? undefined : { ativo: true },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    take
   });
 }
 
@@ -73,7 +60,7 @@ async function deleteBook(id) {
 }
 
 // Busca
-async function searchLivros({ q }) {
+async function searchLivros({ q, take = 50 }) {
   const query = q?.trim() || '';
   if (!query) return [];
   const contains = { contains: query, mode: 'insensitive' };
@@ -91,7 +78,7 @@ async function searchLivros({ q }) {
       }
     ]
   };
-  return prisma.livro.findMany({ where, orderBy: { createdAt: 'desc' } });
+  return prisma.livro.findMany({ where, orderBy: { createdAt: 'desc' }, take });
 }
 
 // Funções de Resenhas
@@ -111,7 +98,7 @@ async function createResenha(data) {
   });
 }
 
-async function getAllResenhas(includeInactive = false) {
+async function getAllResenhas(includeInactive = false, take = 100) {
   return prisma.resenha.findMany({
     where: includeInactive ? undefined : { ativo: true },
     include: {
@@ -124,11 +111,12 @@ async function getAllResenhas(includeInactive = false) {
         }
       }
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    take
   });
 }
 
-async function getResenhasByLivroId(livroId) {
+async function getResenhasByLivroId(livroId, take = 100) {
   return prisma.resenha.findMany({
     where: { 
       livroId: parseInt(livroId),
@@ -143,7 +131,8 @@ async function getResenhasByLivroId(livroId) {
         }
       }
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    take
   });
 }
 
@@ -270,36 +259,30 @@ async function checkFavorito(usuarioId, livroId) {
 
 // Funções de Curtidas em Resenhas
 async function addCurtidaResenha(usuarioId, resenhaId) {
-  // Adicionar curtida
-  const curtida = await prisma.curtidaResenha.create({
-    data: {
-      usuarioId: parseInt(usuarioId),
-      resenhaId: parseInt(resenhaId)
-    }
+  return prisma.$transaction(async (tx) => {
+    const curtida = await tx.curtidaResenha.create({
+      data: { usuarioId: parseInt(usuarioId), resenhaId: parseInt(resenhaId) }
+    });
+    await tx.resenha.update({
+      where: { id: parseInt(resenhaId) },
+      data: { curtidas: { increment: 1 } }
+    });
+    return curtida;
   });
-  
-  // Incrementar contador de curtidas na resenha
-  await prisma.resenha.update({
-    where: { id: parseInt(resenhaId) },
-    data: { curtidas: { increment: 1 } }
-  });
-  
-  return curtida;
 }
 
 async function removeCurtidaResenha(usuarioId, resenhaId) {
-  // Remover curtida
-  await prisma.curtidaResenha.deleteMany({
-    where: {
-      usuarioId: parseInt(usuarioId),
-      resenhaId: parseInt(resenhaId)
+  return prisma.$transaction(async (tx) => {
+    const removed = await tx.curtidaResenha.deleteMany({
+      where: { usuarioId: parseInt(usuarioId), resenhaId: parseInt(resenhaId) }
+    });
+    if (removed.count > 0) {
+      await tx.resenha.update({
+        where: { id: parseInt(resenhaId) },
+        data: { curtidas: { decrement: 1 } }
+      });
     }
-  });
-  
-  // Decrementar contador de curtidas na resenha
-  await prisma.resenha.update({
-    where: { id: parseInt(resenhaId) },
-    data: { curtidas: { decrement: 1 } }
+    return removed.count > 0;
   });
 }
 
@@ -403,11 +386,8 @@ async function createComentario(usuarioId, resenhaId, texto, nota = null, parent
   }
   
   try {
-    const idDisponivel = await getNextAvailableComentarioId();
-
     const comentario = await prisma.comentario.create({
       data: {
-        id: idDisponivel,
         usuarioId: parseInt(usuarioId),
         resenhaId: parseInt(resenhaId),
         parentId: parentId !== null && parentId !== undefined ? parseInt(parentId) : null,
@@ -792,7 +772,6 @@ async function deleteDenunciaComentario(denunciaId) {
 
 module.exports = { 
   createUser, 
-  getNextAvailableComentarioId,
   findUserByEmail, 
   getAllUsers, 
   getUserById, 

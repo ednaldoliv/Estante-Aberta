@@ -25,6 +25,18 @@ model Usuario {
   comentarios Comentario[]
   denuncias  DenunciaComentario[]
   leituras   LeituraUsuario[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique
+  userId    Int
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      Usuario  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Livro {

@@ -2,6 +2,8 @@ const { Router } = require('express');
 const { registrarUsuario, logarUsuario, logarAdmin, solicitarRecuperacaoSenha, redefinirSenha, obterUsuarioPorEmail, listarUsuarios, buscarUsuarioPorId, atualizarUsuario, deletarUsuario, criarLivro, listarLivros, buscarLivroPorId, atualizarLivro, deletarLivro, criarResenha, listarResenhas, listarResenhasPorLivro, buscarResenhaPorId, atualizarResenha, deletarResenha, adicionarFavorito, removerFavorito, listarFavoritosUsuario, verificarFavorito, salvarLeitura, listarLeiturasUsuario, removerLeituraUsuario, uploadFotoPerfil, curtirResenha, descurtirResenha, verificarCurtidaResenha, avaliarResenha, obterAvaliacaoResenha, criarComentario, listarComentariosResenha, deletarComentario, buscar, listarTodosComentarios, atualizarComentarioAdmin, deletarComentarioAdmin, criarDenuncia, listarDenuncias, atualizarStatusDenunciaCtrl, deletarDenunciaCtrl } = require('../controllers/controller');
 const { uploadBooks, uploadPerfil } = require('../config/multer');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { rateLimit } = require('express-rate-limit');
+const crypto = require('crypto');
 const { criarComentarioComAvaliacao, deletarComentarioComAvaliacao } = require('../controllers/controller');
 
 const router = Router();
@@ -25,8 +27,10 @@ const handleUploadPerfil = (req, res, next) => {
 router.post('/registro', registrarUsuario);
 router.post('/login', logarUsuario);
 router.post('/admin/login', logarAdmin);
-router.post('/auth/forgot-password', solicitarRecuperacaoSenha);
-router.post('/auth/reset-password', redefinirSenha);
+const resetIpLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 20, standardHeaders: true, legacyHeaders: false });
+const resetEmailLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 5, standardHeaders: true, legacyHeaders: false, keyGenerator: req => crypto.createHash('sha256').update(String(req.body?.email || '').trim().toLowerCase()).digest('hex') });
+router.post('/auth/forgot-password', resetIpLimit, resetEmailLimit, solicitarRecuperacaoSenha);
+router.post('/auth/reset-password', resetIpLimit, redefinirSenha);
 router.get('/usuario/:email', requireAuth, requireAdmin, obterUsuarioPorEmail);
 router.get('/me', requireAuth, (req, res) => {
   req.params.id = String(req.auth.userId);

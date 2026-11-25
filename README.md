@@ -61,6 +61,10 @@ O frontend usa `VITE_API_URL` para acessar a API. O backend atende sob o prefixo
 
 ## Configuração local
 
+A recuperação de senha requer `FRONTEND_URL` e as variáveis `SMTP_*` descritas em `.env.example`. Use HTTPS para o frontend em produção e um remetente autorizado pelo serviço SMTP. Para desenvolvimento, configure um servidor SMTP de teste; o token nunca é retornado pela API. A migration de tokens deve ser aplicada ao banco apropriado antes de usar a funcionalidade. Os limites de requisições são mantidos em memória por processo; instalações com múltiplas instâncias precisam de armazenamento compartilhado para esses limites.
+
+Execute os testes isolados com `npm test`.
+
 1. Instale as dependências.
 
    ```bash

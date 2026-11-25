@@ -1,22 +1,10 @@
-const crypto = require('crypto');
+const { passwordResetService } = require('../services/passwordReset');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
 const { createUser, findUserByEmail, getAllUsers, getUserById, updateUser, deleteUser, createBook, getAllBooks, getBookById, updateBook, deleteBook, createResenha, getAllResenhas, getResenhasByLivroId, getResenhaById, updateResenha, deleteResenha, addFavorito, addOrUpdateLeitura, removeLeitura, getLeiturasByUsuarioId, removeFavorito, getFavoritosByUsuarioId, checkFavorito, addCurtidaResenha, removeCurtidaResenha, checkCurtidaResenha, addOrUpdateAvaliacaoResenha, getAvaliacaoStatsByResenhaId, searchLivros, createComentario, getComentariosByResenhaId, deleteComentario, getComentarioById, getAllComentariosAdmin, updateComentarioAdmin, deleteComentarioAdmin, criarDenunciaComentario, getDenunciasComentarios, atualizarStatusDenuncia, deleteDenunciaComentario } = require('../services/service');
 const { signUserToken } = require('../middleware/auth');
 const { createComentarioWithAvaliacao, deleteComentarioWithAvaliacao } = require('../services/service');
-
-const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
-const passwordResetTokens = new Map();
-
-function cleanupExpiredResetTokens() {
-  const now = Date.now();
-  for (const [token, payload] of passwordResetTokens.entries()) {
-    if (payload.expiresAt <= now) {
-      passwordResetTokens.delete(token);
-    }
-  }
-}
 
 function isOwnerOrAdmin(req, userId) {
   return Boolean(req.auth?.isAdmin || req.auth?.userId === Number(userId));
@@ -148,89 +136,29 @@ async function obterUsuarioPorEmail(req, res) {
 }
 
 async function solicitarRecuperacaoSenha(req, res) {
-  const { email } = req.body;
-
-  if (!email || String(email).trim().length === 0) {
-    return res.status(400).json({ error: 'Email é obrigatório' });
-  }
-
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim() : '';
+  if (!email || email.length > 254) return res.status(400).json({ error: 'Email é obrigatório' });
   try {
-    cleanupExpiredResetTokens();
-    const usuario = await findUserByEmail(String(email).trim());
-
-    // Resposta genérica para não revelar se o email existe.
-    if (!usuario) {
-      return res.json({
-        message: 'Se o email estiver cadastrado, enviaremos instruções de recuperação.'
-      });
-    }
-
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = Date.now() + RESET_TOKEN_TTL_MS;
-
-    passwordResetTokens.set(token, {
-      userId: usuario.id,
-      expiresAt
-    });
-
-    const resetLink = `/esqueci-senha?token=${encodeURIComponent(token)}`;
-
-    return res.json({
-      message: 'Solicitação recebida. Use o link de recuperação para redefinir sua senha.',
-      resetToken: token,
-      resetLink,
-      expiresInMinutes: 15
-    });
-  } catch (e) {
-    console.error('Erro ao solicitar recuperação de senha:', e);
-    return res.status(500).json({ error: 'Erro ao processar recuperação de senha' });
+    await passwordResetService.request(email);
+  } catch (_) {
+    console.error('Falha ao processar solicitação de recuperação de senha.');
   }
+  return res.json({ message: 'Se o email estiver cadastrado, enviaremos instruções de recuperação.' });
 }
 
 async function redefinirSenha(req, res) {
-  const { token, novaSenha, confirmarSenha } = req.body;
-
-  if (!token || !novaSenha || !confirmarSenha) {
-    return res.status(400).json({ error: 'Token e nova senha são obrigatórios' });
-  }
-
-  if (String(novaSenha).length < 6) {
-    return res.status(400).json({ error: 'A senha deve ter pelo menos 6 caracteres' });
-  }
-
-  if (novaSenha !== confirmarSenha) {
-    return res.status(400).json({ error: 'As senhas não conferem' });
-  }
-
+  const { token, novaSenha, confirmarSenha } = req.body || {};
+  if (typeof token !== 'string' || typeof novaSenha !== 'string' || typeof confirmarSenha !== 'string' || !token || !novaSenha || !confirmarSenha) return res.status(400).json({ error: 'Token e nova senha são obrigatórios' });
+  if (novaSenha.length < 6) return res.status(400).json({ error: 'A senha deve ter pelo menos 6 caracteres' });
+  if (novaSenha !== confirmarSenha) return res.status(400).json({ error: 'As senhas não conferem' });
   try {
-    cleanupExpiredResetTokens();
-    const payload = passwordResetTokens.get(String(token));
-
-    if (!payload) {
-      return res.status(400).json({ error: 'Token inválido ou expirado' });
-    }
-
-    if (payload.expiresAt <= Date.now()) {
-      passwordResetTokens.delete(String(token));
-      return res.status(400).json({ error: 'Token inválido ou expirado' });
-    }
-
-    await updateUser(payload.userId, { senha: await bcrypt.hash(String(novaSenha), 12) });
-
-    // Invalida todos os tokens pendentes do usuário após redefinir senha.
-    for (const [storedToken, storedPayload] of passwordResetTokens.entries()) {
-      if (storedPayload.userId === payload.userId) {
-        passwordResetTokens.delete(storedToken);
-      }
-    }
-
+    if (!await passwordResetService.reset(token, novaSenha)) return res.status(400).json({ error: 'Token inválido ou expirado' });
     return res.json({ message: 'Senha redefinida com sucesso' });
-  } catch (e) {
-    console.error('Erro ao redefinir senha:', e);
+  } catch (_) {
+    console.error('Falha ao redefinir senha.');
     return res.status(500).json({ error: 'Erro ao redefinir senha' });
   }
 }
-
 // Busca genérica
 async function buscar(req, res) {
   try {

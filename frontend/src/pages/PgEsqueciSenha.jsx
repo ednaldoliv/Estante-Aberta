@@ -27,10 +27,6 @@ export default function PgEsqueciSenha() {
       const data = await requestPasswordReset({ email });
       setSuccess(data?.message || 'Solicitacao enviada com sucesso.');
 
-      // Como nao temos envio de email no ambiente atual, redireciona usando o token retornado.
-      if (data?.resetToken) {
-        navigate(`/esqueci-senha?token=${encodeURIComponent(data.resetToken)}`);
-      }
     } catch (err) {
       setError(err.message || 'Erro ao solicitar recuperacao de senha.');
     } finally {

@@ -61,14 +61,10 @@ O frontend usa `VITE_API_URL` para acessar a API. O backend atende sob o prefixo
 
 ## Configuração local
 
-A recuperação de senha requer `FRONTEND_URL` e as variáveis `SMTP_*` descritas em `.env.example`. Use HTTPS para o frontend em produção e um remetente autorizado pelo serviço SMTP. Para desenvolvimento, configure um servidor SMTP de teste; o token nunca é retornado pela API. A migration de tokens deve ser aplicada ao banco apropriado antes de usar a funcionalidade. Os limites de requisições são mantidos em memória por processo; instalações com múltiplas instâncias precisam de armazenamento compartilhado para esses limites.
-
-Execute os testes isolados com `npm test`.
-
 1. Instale as dependências.
 
    ```bash
-   npm install
+   npm ci
    ```
 
 2. Crie o arquivo de ambiente a partir do exemplo.
@@ -76,6 +72,8 @@ Execute os testes isolados com `npm test`.
    ```powershell
    Copy-Item .env.example .env
    ```
+
+   Em macOS ou Linux, use `cp .env.example .env`.
 
 3. Preencha o `.env` com credenciais próprias. Nunca envie esse arquivo ao Git.
 
@@ -86,9 +84,9 @@ Execute os testes isolados com `npm test`.
    VITE_API_URL="http://localhost:3001/api"
    ```
 
-   Gere uma `JWT_SECRET` única e longa. Uma URL de banco que tenha sido exposta deve ser revogada e substituída no painel do provedor antes de ser usada novamente.
+   Consulte a tabela de variáveis abaixo e configure também o SMTP para usar a recuperação de senha. Gere uma `JWT_SECRET` única e aleatória com pelo menos 32 caracteres. Credenciais expostas devem ser revogadas e substituídas no provedor.
 
-4. Gere o Prisma Client e aplique as migrations rastreadas pelo projeto.
+4. Gere o Prisma Client. Antes de aplicar migrations, confirme que `DATABASE_URL` aponta para um banco de desenvolvimento apropriado: o segundo comando altera esse banco.
 
    ```bash
    npm run prisma:generate
@@ -106,6 +104,29 @@ Execute os testes isolados com `npm test`.
 
 > Sempre reinicie o backend depois de alterar arquivos em `backend/src` ou aplicar migrations.
 
+### Variáveis de ambiente
+
+Use [`.env.example`](.env.example) como referência; os valores de SMTP são fictícios.
+
+| Variável | Finalidade |
+| --- | --- |
+| `DATABASE_URL` | Conexão PostgreSQL usada pelo Prisma; mantenha-a secreta. |
+| `JWT_SECRET` | Chave de assinatura dos tokens de autenticação; use um valor aleatório exclusivo de pelo menos 32 caracteres. |
+| `PORT` | Porta do backend; padrão `3001`. |
+| `VITE_API_URL` | URL da API acessível pelo navegador. Variáveis `VITE_*` são incluídas no frontend e nunca devem conter segredos. |
+| `FRONTEND_URL` | Origem do frontend usada nos links de recuperação. Use HTTPS em produção; HTTP é aceito apenas para `localhost` ou `127.0.0.1`. |
+| `SMTP_HOST`, `SMTP_PORT` | Servidor e porta do serviço SMTP. |
+| `SMTP_SECURE` | `true` para conexão TLS desde o início; `false` para conexão que usa STARTTLS. |
+| `SMTP_REQUIRE_TLS` | Com `true`, exige STARTTLS quando não há TLS imediato. Mantenha habilitado em produção. |
+| `SMTP_USER`, `SMTP_PASSWORD` | Credenciais SMTP, quando exigidas pelo servidor. Mantenha-as secretas. |
+| `SMTP_FROM` | Endereço remetente autorizado pelo provedor SMTP. |
+
+### Recuperação de senha
+
+Configure um servidor SMTP e aplique a migration de tokens no banco correto antes de utilizar o recurso. Para desenvolvimento, pode ser usado um servidor SMTP de teste que capture mensagens. O link é enviado ao endereço cadastrado, expira em 15 minutos e é de uso único; a API não retorna o token.
+
+As rotas de recuperação possuem limites em memória por processo. Em várias instâncias, configure uma solução de limitação compartilhada antes de expor a aplicação. A configuração atual aguarda o envio SMTP e pode apresentar diferenças de tempo entre contas existentes e inexistentes.
+
 ## Scripts
 
 | Comando | Descrição |
@@ -115,10 +136,11 @@ Execute os testes isolados com `npm test`.
 | `npm run dev:backend` | Inicia somente a API Express. |
 | `npm run build` | Gera a build de produção do frontend. |
 | `npm run preview` | Serve localmente a build gerada. |
+| `npm test` | Executa testes isolados da recuperação de senha; não valida a entrega real de e-mail nem transações concorrentes no PostgreSQL. |
 | `npm run prisma:generate` | Gera o Prisma Client. |
-| `npm run prisma:migrate:deploy` | Aplica migrations pendentes. |
-| `npm run prisma:push` | Sincroniza o schema sem criar migration; use apenas em desenvolvimento controlado. |
-| `npm run security:hash-passwords` | Migra hashes de senha legados para bcrypt. |
+| `npm run prisma:migrate:deploy` | Aplica migrations pendentes e altera o banco configurado. |
+| `npm run prisma:push` | Altera o schema do banco sem criar migration; use apenas em desenvolvimento controlado. |
+| `npm run security:hash-passwords` | Altera senhas legadas no banco; use somente após avaliar e autorizar a operação. |
 
 ## Modelo de dados principal
 
